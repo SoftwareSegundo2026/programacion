@@ -1,7 +1,7 @@
 from typing import Optional, List
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.repositories.artist_repository import artist_repository
-from app.schemas.artist import ArtistCreate, ArtistUpdate, Artist
+from .repository import artist_repository
+from .schemas import ArtistCreate, ArtistUpdate, Artist
 
 class ArtistService:
     """Business logic for artists."""

@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
 from app.core.database import get_db
-from app.schemas.artist import Artist, ArtistCreate, ArtistUpdate
-from app.services.artist_service import artist_service
+from .schemas import Artist, ArtistCreate, ArtistUpdate
+from .service import artist_service
 
 router = APIRouter()
 

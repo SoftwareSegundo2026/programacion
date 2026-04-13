@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from app.core.schemas import CustomModel
 from typing import Optional
 
-class ArtistBase(BaseModel):
+class ArtistBase(CustomModel):
     Name: str
 
 class ArtistCreate(ArtistBase):
@@ -12,6 +12,3 @@ class ArtistUpdate(ArtistBase):
 
 class Artist(ArtistBase):
     ArtistId: int
-
-    class Config:
-        from_attributes = True

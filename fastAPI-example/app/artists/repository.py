@@ -1,6 +1,7 @@
-from app.repositories.base_repository import BaseRepository
-from app.models.artist import Artist
-from app.schemas.artist import ArtistCreate, ArtistUpdate
+from sqlalchemy import select
+from app.core.base_repository import BaseRepository
+from .model import Artist
+from .schemas import ArtistCreate, ArtistUpdate
 
 class ArtistRepository(BaseRepository[Artist, ArtistCreate, ArtistUpdate]):
     """Artist-specific repository."""
