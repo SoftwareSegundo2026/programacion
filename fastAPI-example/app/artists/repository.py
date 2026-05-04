@@ -1,9 +1,9 @@
 from sqlalchemy import select
 from app.core.base_repository import BaseRepository
 from .model import Artist
-from .schemas import ArtistCreate, ArtistUpdate
+from .schemas import Create, Update
 
-class ArtistRepository(BaseRepository[Artist, ArtistCreate, ArtistUpdate]):
+class ArtistRepository(BaseRepository[Artist, Create, Update]):
     """Artist-specific repository."""
 
     async def get_by_name(self, db, name: str):

@@ -7,8 +7,8 @@ class Base(CustomModel):
 class Create(Base):
     pass
 
-class Update(Base):
+class Update(CustomModel):
     Name: Optional[str] = None
 
 class Response(Base):
-    ArtistId: int
+    GenreId: int
