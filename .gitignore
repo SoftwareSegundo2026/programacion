@@ -11,3 +11,4 @@ wheels/
 
 .agents/
 skills-lock.json
+fastAPI-example/.env

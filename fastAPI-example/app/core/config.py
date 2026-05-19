@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "your-secret-key-here"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     API_V1_STR: str = "/api/v1"
+    LOG_FILE_PATH: str = "./instance/fastapi-example.log"
+    LOG_LEVEL: str = "DEBUG"
 
     class Config:
         env_file = ".env"

@@ -4,10 +4,12 @@ from typing import List
 
 from app.api.dependencies import get_current_active_user
 from app.core.database import get_db
+from app.core.logging import get_logger
 from .schemas import Response, Create, Update
 from .service import artist_service
 
 router = APIRouter(dependencies=[Depends(get_current_active_user)])
+logger = get_logger(__name__)
 
 @router.post("/", response_model=Response, status_code=status.HTTP_201_CREATED)
 async def create(
@@ -36,7 +38,9 @@ async def read_all(
     db: AsyncSession = Depends(get_db)
 ):
     """Get multiple artists."""
+    logger.info("3. artists.read_all - tarea=recibir GET /artists y delegar al service - recibe token=NO, depende de get_current_active_user")
     artists = await artist_service.get_all(db, skip, limit)
+    logger.info("6. artists.read_all - tarea=retornar artistas al cliente - cantidad=%s", len(artists))
     return artists
 
 @router.patch("/{artist_id}", response_model=Response)

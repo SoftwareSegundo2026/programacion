@@ -7,8 +7,10 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(credentials: UserLogin) -> Token:
-    user = authenticate_user(credentials.username, credentials.password)
+async def login_for_access_token(
+    credentials: UserLogin,
+) -> Token:
+    user = await authenticate_user(None, credentials.username, credentials.password)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

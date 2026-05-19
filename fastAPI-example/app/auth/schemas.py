@@ -18,6 +18,7 @@ class UserLogin(CustomModel):
 
 
 class User(CustomModel):
+    user_id: Optional[int] = None
     username: str
     email: Optional[str] = None
     full_name: Optional[str] = None
@@ -26,3 +27,11 @@ class User(CustomModel):
 
 class UserInDB(User):
     hashed_password: str
+
+
+class UserCreate(CustomModel):
+    username: str
+    email: str
+    full_name: Optional[str] = None
+    disabled: bool = False
+    password: str

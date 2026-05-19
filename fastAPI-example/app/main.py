@@ -2,20 +2,24 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.core.database import engine, Base
+from app.core.database import engine, Base, AsyncSessionLocal
 from app.api.v1.router import api_router
 from app.core.config import get_settings
+from app.core.logging import setup_logging
+from app.auth.seeder import seed_demo_users
 
 settings = get_settings()
+setup_logging(settings.LOG_FILE_PATH, settings.LOG_LEVEL)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan events."""
     # Startup
-    # from sqlalchemy import create_engine
-    # sync_engine = create_engine(settings.DATABASE_URL.replace('sqlite+aiosqlite://', 'sqlite://'))
-    # Base.metadata.create_all(bind=sync_engine)
-    # sync_engine.dispose()
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async with AsyncSessionLocal() as session:
+        await seed_demo_users(session)
     yield
     # Shutdown
     await engine.dispose()
@@ -23,7 +27,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="FastAPI Example",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    swagger_ui_parameters={"persistAuthorization": True},
 )
 
 # CORS middleware

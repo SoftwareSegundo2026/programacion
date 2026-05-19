@@ -33,6 +33,23 @@ Usuarios de demostración:
 
 `reader` está marcado como inactivo para validar la protección con `get_current_active_user`.
 
+Endpoints de administración de usuarios:
+
+- `GET /api/v1/users`
+- `POST /api/v1/users`
+
+Ambos requieren un `Bearer token` válido. `POST /api/v1/users` crea un usuario nuevo con contraseña hasheada en la base de datos.
+
+## Swagger UI
+
+Abre `GET /docs`, pulsa `Authorize` y pega el `access_token` obtenido en el login.
+El esquema de seguridad aparece como `bearerAuth`, así que Swagger enviará el token como Bearer en las rutas protegidas.
+
+## Logs
+
+El flujo de `GET /api/v1/artists/` escribe trazas numeradas y descriptivas en consola y en `./instance/fastapi-example.log` cuando `LOG_LEVEL=DEBUG`.
+Cada línea indica la función, la tarea y si el paso recibe o no token JWT.
+
 ## Variables de entorno
 
 Configura como mínimo estas variables en `.env`:
@@ -41,6 +58,10 @@ Configura como mínimo estas variables en `.env`:
 - `SECRET_KEY`
 - `ACCESS_TOKEN_EXPIRE_MINUTES`
 - `API_V1_STR`
+- `LOG_FILE_PATH`
+- `LOG_LEVEL`
+
+Puedes copiar el archivo [`.env.example`](.env.example) a [`.env`](.env) y ajustar el secreto antes de ejecutar la app.
 
 ## Verificación
 
