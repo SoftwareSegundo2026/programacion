@@ -1,3 +1,4 @@
+from decimal import Decimal
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
@@ -7,5 +8,5 @@ def datetime_to_iso_str(dt: datetime) -> str:
 class CustomModel(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
-        json_encoders={datetime: datetime_to_iso_str},
+        json_encoders={datetime: datetime_to_iso_str, Decimal: float},
     )

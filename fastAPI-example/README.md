@@ -1,6 +1,6 @@
 # fastAPI-example
 
-Ejemplo de API en FastAPI con autenticación JWT y recursos CRUD para artistas, álbumes y géneros.
+Ejemplo de API en FastAPI con autenticación JWT y recursos CRUD para artistas, álbumes, géneros y tracks.
 
 ## Autenticación
 
@@ -40,6 +40,33 @@ Endpoints de administración de usuarios:
 
 Ambos requieren un `Bearer token` válido. `POST /api/v1/users` crea un usuario nuevo con contraseña hasheada en la base de datos.
 
+## Tracks
+
+Se incorporó la entidad `Track` de Chinook con sus relaciones a `Album`, `Genre` y `MediaType`.
+
+Endpoints disponibles:
+
+- `GET /api/v1/tracks`
+- `GET /api/v1/tracks/{track_id}`
+- `POST /api/v1/tracks`
+- `PATCH /api/v1/tracks/{track_id}`
+- `DELETE /api/v1/tracks/{track_id}`
+
+Campos principales al crear o actualizar:
+
+- `Name`
+- `AlbumId`
+- `MediaTypeId`
+- `GenreId`
+- `Composer`
+- `Milliseconds`
+- `Bytes`
+- `UnitPrice`
+
+Las respuestas devuelven también `AlbumTitle`, `GenreName` y `MediaTypeName` para facilitar la lectura desde la API.
+
+La prueba automática `tests/test_track_flow.py` valida el flujo completo de listar, crear, leer, actualizar y eliminar un track autenticado.
+
 ## Swagger UI
 
 Abre `GET /docs`, pulsa `Authorize` y pega el `access_token` obtenido en el login.
@@ -77,3 +104,5 @@ La suite cubre:
 - credenciales incorrectas,
 - token expirado,
 - acceso de usuario inactivo.
+
+Además, valida el CRUD de `Track` contra `instance/Chinook.db`.
