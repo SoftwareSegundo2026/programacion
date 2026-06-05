@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.activities.service import log_activity
 from app.api.dependencies import get_current_active_user, get_current_admin_user
 from app.auth.schemas import UserInDB
-from app.auth.service import create_user, list_users, update_user_disabled, change_password, reset_password
+from app.auth.service import create_user, list_users, update_user_disabled, change_password, reset_password, delete_user
 from app.core.database import get_db
 
 from .schemas import User, UserCreate, UserUpdateDisabled, PasswordChange, PasswordReset
@@ -81,3 +81,15 @@ async def reset_user_password(
     if not ok:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     await log_activity(db, current_user.username, "update", f"Password reset for user id={user_id}")
+
+
+@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def remove_user(
+    user_id: int,
+    current_user: UserInDB = Depends(get_current_admin_user),
+    db: AsyncSession = Depends(get_db),
+) -> None:
+    ok = await delete_user(db, user_id)
+    if not ok:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    await log_activity(db, current_user.username, "delete", f"User id={user_id}")

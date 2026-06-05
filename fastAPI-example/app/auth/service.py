@@ -115,3 +115,12 @@ async def reset_password(db: AsyncSession, user_id: int, new_password: str) -> b
     user.hashed_password = get_password_hash(new_password)
     await db.flush()
     return True
+
+
+async def delete_user(db: AsyncSession, user_id: int) -> bool:
+    result = await db.execute(select(UserModel).where(UserModel.user_id == user_id))
+    user = result.scalars().first()
+    if user is None:
+        return False
+    await db.delete(user)
+    return True
