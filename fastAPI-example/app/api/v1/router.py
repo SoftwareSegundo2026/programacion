@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from app.activities.router import router as activities_router
 from app.auth.router import router as auth_router
 from app.artists.router import router as artists_router
 from app.albums.router import router as albums_router
@@ -7,6 +8,7 @@ from app.track.router import router as tracks_router
 from app.users.router import router as users_router
 
 api_router = APIRouter()
+api_router.include_router(activities_router)
 api_router.include_router(auth_router)
 api_router.include_router(users_router)
 api_router.include_router(artists_router, prefix="/artists", tags=["artists"])

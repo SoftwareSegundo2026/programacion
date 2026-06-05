@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     LOG_FILE_PATH: str = "./instance/fastapi-example.log"
     LOG_LEVEL: str = "DEBUG"
+    UPLOAD_DIR: str = "./static/images"
 
     class Config:
         env_file = ".env"

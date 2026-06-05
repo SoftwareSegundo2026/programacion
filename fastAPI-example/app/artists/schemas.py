@@ -3,6 +3,7 @@ from typing import Optional
 
 class Base(CustomModel):
     Name: str
+    ImageUrl: Optional[str] = None
 
 class Create(Base):
     pass

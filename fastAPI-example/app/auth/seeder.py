@@ -15,6 +15,7 @@ DEMO_USERS = [
         "email": "admin@example.com",
         "full_name": "Demo Admin",
         "disabled": False,
+        "is_admin": True,
         "password": "admin123",
     },
     {
@@ -22,6 +23,7 @@ DEMO_USERS = [
         "email": "reader@example.com",
         "full_name": "Demo Reader",
         "disabled": True,
+        "is_admin": False,
         "password": "reader123",
     },
 ]
@@ -43,6 +45,7 @@ async def seed_demo_users(db: AsyncSession) -> None:
                 email=demo_user["email"],
                 full_name=demo_user["full_name"],
                 disabled=demo_user["disabled"],
+                is_admin=demo_user["is_admin"],
                 hashed_password=get_password_hash(demo_user["password"]),
             )
         )

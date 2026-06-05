@@ -5,3 +5,4 @@ class Artist(Base):
     __tablename__ = 'Artist'
     ArtistId = Column(Integer, primary_key=True)
     Name = Column(String(120))
+    ImageUrl = Column(String(500), nullable=True)

@@ -23,6 +23,7 @@ class User(CustomModel):
     email: Optional[str] = None
     full_name: Optional[str] = None
     disabled: bool = False
+    is_admin: bool = False
 
 
 class UserInDB(User):
@@ -34,4 +35,5 @@ class UserCreate(CustomModel):
     email: str
     full_name: Optional[str] = None
     disabled: bool = False
+    is_admin: bool = False
     password: str

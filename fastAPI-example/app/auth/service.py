@@ -35,8 +35,10 @@ async def authenticate_user(db: AsyncSession | None, username: str, password: st
     return user
 
 
-async def list_users(db: AsyncSession) -> list[User]:
-    result = await db.execute(select(UserModel).order_by(UserModel.user_id))
+async def list_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[User]:
+    result = await db.execute(
+        select(UserModel).order_by(UserModel.user_id).offset(skip).limit(limit)
+    )
     return [User.model_validate(user) for user in result.scalars().all()]
 
 
@@ -57,6 +59,7 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
         email=user_in.email,
         full_name=user_in.full_name,
         disabled=user_in.disabled,
+        is_admin=user_in.is_admin,
         hashed_password=get_password_hash(user_in.password),
     )
     db.add(db_user)
@@ -65,6 +68,50 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
     return User.model_validate(db_user)
 
 
+async def update_user_disabled(db: AsyncSession, user_id: int, disabled: bool) -> User | None:
+    result = await db.execute(select(UserModel).where(UserModel.user_id == user_id))
+    user = result.scalars().first()
+    if user is None:
+        return None
+    user.disabled = disabled
+    await db.flush()
+    await db.refresh(user)
+    return User.model_validate(user)
+
+
+async def change_password(
+    db: AsyncSession,
+    username: str | None,
+    current_password: str,
+    new_password: str,
+    user_id: int | None = None,
+) -> bool:
+    if user_id is not None:
+        result = await db.execute(select(UserModel).where(UserModel.user_id == user_id))
+    elif username is not None:
+        result = await db.execute(select(UserModel).where(UserModel.username == username))
+    else:
+        return False
+    user = result.scalars().first()
+    if user is None:
+        return False
+    if not verify_password(current_password, user.hashed_password):
+        return False
+    user.hashed_password = get_password_hash(new_password)
+    await db.flush()
+    return True
+
+
 def create_user_access_token(user: UserInDB) -> str:
     expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return create_access_token({"sub": user.username}, expires_delta=expires_delta)
+
+
+async def reset_password(db: AsyncSession, user_id: int, new_password: str) -> bool:
+    result = await db.execute(select(UserModel).where(UserModel.user_id == user_id))
+    user = result.scalars().first()
+    if user is None:
+        return False
+    user.hashed_password = get_password_hash(new_password)
+    await db.flush()
+    return True

@@ -55,3 +55,28 @@ def get_current_active_user(current_user: UserInDB = Depends(get_current_user)) 
 			detail="Inactive user",
 		)
 	return current_user
+
+
+def get_current_admin_user(current_user: UserInDB = Depends(get_current_active_user)) -> UserInDB:
+	if not current_user.is_admin:
+		raise HTTPException(
+			status_code=status.HTTP_403_FORBIDDEN,
+			detail="Admin privileges required",
+		)
+	return current_user
+
+
+async def get_optional_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+) -> UserInDB | None:
+    if credentials is None:
+        return None
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
+        subject = payload.get("sub")
+        if subject is None:
+            return None
+        return await get_user(None, subject)
+    except (JWTError, Exception):
+        return None

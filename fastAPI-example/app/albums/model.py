@@ -7,6 +7,7 @@ class Album(Base):
     AlbumId = Column(Integer, primary_key=True)
     Title = Column(String(160), nullable=False)
     ArtistId = Column(Integer, ForeignKey('Artist.ArtistId'), nullable=False)
+    ImageUrl = Column(String(500), nullable=True)
 
     artist = relationship("Artist", backref="albums")
 
