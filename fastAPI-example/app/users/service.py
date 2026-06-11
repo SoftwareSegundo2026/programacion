@@ -4,11 +4,11 @@ from typing import Optional
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.model import User as UserModel
 from app.core.config import get_settings
 from app.core.database import AsyncSessionLocal
 from app.core.security import create_access_token, get_password_hash, verify_password
 
+from .model import User as UserModel
 from .schemas import User, UserCreate, UserInDB
 
 settings = get_settings()
@@ -66,6 +66,20 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
     await db.flush()
     await db.refresh(db_user)
     return User.model_validate(db_user)
+
+
+async def update_user_profile(db: AsyncSession, username: str, full_name: str | None, email: str | None) -> User | None:
+    result = await db.execute(select(UserModel).where(UserModel.username == username))
+    user = result.scalars().first()
+    if user is None:
+        return None
+    if full_name is not None:
+        user.full_name = full_name
+    if email is not None:
+        user.email = email
+    await db.flush()
+    await db.refresh(user)
+    return User.model_validate(user)
 
 
 async def update_user_disabled(db: AsyncSession, user_id: int, disabled: bool) -> User | None:

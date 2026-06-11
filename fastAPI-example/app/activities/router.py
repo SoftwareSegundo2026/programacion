@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_optional_user
-from app.auth.schemas import UserInDB
+from app.users.schemas import UserInDB
 from app.core.database import get_db
 
 from .schemas import ActivityResponse

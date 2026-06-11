@@ -5,7 +5,7 @@ from typing import List
 from app.activities.service import log_activity
 from app.api.dependencies import get_current_active_user
 from app.core.database import get_db
-from app.auth.schemas import UserInDB
+from app.users.schemas import UserInDB
 from .schemas import Response, Create, Update
 from .service import genre_service
 

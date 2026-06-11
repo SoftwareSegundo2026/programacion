@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.model import User as UserModel
+from app.users.model import User as UserModel
 from app.core.logging import get_logger
 
 from .model import Activity as ActivityModel

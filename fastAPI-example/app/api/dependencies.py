@@ -2,8 +2,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 
-from app.auth.schemas import TokenData, UserInDB
-from app.auth.service import get_user
+from app.users.schemas import TokenData, UserInDB
+from app.users.service import get_user
 from app.core.config import get_settings
 from app.core.logging import get_logger
 from app.core.security import ALGORITHM

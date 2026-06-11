@@ -6,7 +6,7 @@ from app.activities.service import log_activity
 from app.api.dependencies import get_current_active_user
 from app.core.database import get_db
 from app.core.image_service import save_upload, get_image_response, fetch_from_wikipedia
-from app.auth.schemas import UserInDB
+from app.users.schemas import UserInDB
 from .schemas import Response, Create, Update
 from .service import album_service
 

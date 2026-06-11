@@ -8,7 +8,7 @@ from app.core.database import engine, Base, AsyncSessionLocal
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.logging import setup_logging
-from app.auth.seeder import seed_demo_users
+from app.users.seeder import seed_demo_users
 
 settings = get_settings()
 setup_logging(settings.LOG_FILE_PATH, settings.LOG_LEVEL)

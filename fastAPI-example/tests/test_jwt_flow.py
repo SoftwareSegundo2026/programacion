@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.api.dependencies import get_current_active_user, get_current_user
 from app.main import app
-from app.auth.service import authenticate_user, create_user_access_token
+from app.users.service import authenticate_user, create_user_access_token
 from app.core.security import create_access_token
 
 

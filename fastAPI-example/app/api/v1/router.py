@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.activities.router import router as activities_router
-from app.auth.router import router as auth_router
+from app.users.router import auth_router
 from app.artists.router import router as artists_router
 from app.albums.router import router as albums_router
 from app.genres.router import router as genres_router
