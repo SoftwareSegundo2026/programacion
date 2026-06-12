@@ -10,14 +10,14 @@ ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 
 
 def _get_storage_dir(entity_type: str) -> Path:
-    """Get the storage directory for an entity type (artists/albums)."""
+    """Devuelve la carpeta donde se guardan las imágenes (artists/ o albums/), creándola si no existe."""
     upload_dir = Path(settings.UPLOAD_DIR) / entity_type
     upload_dir.mkdir(parents=True, exist_ok=True)
     return upload_dir
 
 
 def _find_existing(entity_type: str, entity_id: int) -> Path | None:
-    """Find existing image file for entity, regardless of extension."""
+    """Busca si ya existe una imagen para esta entidad (sin importar la extensión)."""
     storage_dir = _get_storage_dir(entity_type)
     for ext in ALLOWED_EXTENSIONS:
         path = storage_dir / f"{entity_id}{ext}"
@@ -27,20 +27,20 @@ def _find_existing(entity_type: str, entity_id: int) -> Path | None:
 
 
 def _remove_existing(entity_type: str, entity_id: int):
-    """Remove any existing image file for entity."""
+    """Elimina cualquier imagen existente de la entidad (para reemplazarla)."""
     existing = _find_existing(entity_type, entity_id)
     if existing:
         existing.unlink()
 
 
 def _to_url_path(absolute_path: Path) -> str:
-    """Convert absolute file path to URL path relative to static mount."""
+    """Convierte una ruta de archivo en una URL accesible (ej: /static/images/artists/5.jpg)."""
     static_root = Path(settings.UPLOAD_DIR).resolve()
     return f"/static/images/{absolute_path.parent.name}/{absolute_path.name}"
 
 
 async def save_upload(entity_type: str, entity_id: int, file: UploadFile) -> str:
-    """Save an uploaded image file and return its URL path."""
+    """Guarda una imagen subida por el usuario y devuelve su URL."""
     ext = Path(file.filename).suffix.lower()
     if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(
@@ -65,8 +65,8 @@ DEFAULT_IMAGES = {
 
 
 def get_image_response(image_url: str | None, entity_type: str = "artists"):
-    """Return a FileResponse for local images, RedirectResponse for external URLs,
-    or the default placeholder when no image is available."""
+    """Devuelve la imagen: si es local la entrega como archivo, si es externa redirige,
+    si no hay imagen muestra un placeholder SVG por defecto."""
     if image_url and image_url.startswith("/static/"):
         file_path = Path(".") / image_url.lstrip("/")
         file_path = file_path.resolve()
@@ -81,7 +81,7 @@ def get_image_response(image_url: str | None, entity_type: str = "artists"):
 
 
 async def fetch_from_wikipedia(entity_type: str, entity_id: int, query: str) -> str:
-    """Search Wikipedia for an image matching the query, download and save it."""
+    """Busca en Wikipedia una imagen del artista/álbum, la descarga y la guarda localmente."""
     import httpx
 
     search_url = "https://en.wikipedia.org/w/api.php"

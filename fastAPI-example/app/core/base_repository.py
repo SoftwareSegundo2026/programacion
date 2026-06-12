@@ -8,14 +8,14 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
-    """Base repository for CRUD operations."""
+    """Clase genérica con operaciones básicas de base de datos: crear, leer, actualizar, eliminar."""
 
     def __init__(self, model: Type[ModelType]):
         self.model = model
         self.pk_name = list(self.model.__table__.primary_key.columns)[0].name
 
     async def get(self, db: AsyncSession, id: int) -> Optional[ModelType]:
-        """Get by ID."""
+        """Busca un registro por su ID en la BD."""
         pk_column = getattr(self.model, self.pk_name)
         result = await db.execute(
             select(self.model).where(pk_column == id)
@@ -28,7 +28,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         skip: int = 0,
         limit: int = 100
     ) -> List[ModelType]:
-        """Get multiple records."""
+        """Trae varios registros con paginación (skip = cuántos saltar, limit = cuántos traer)."""
         result = await db.execute(
             select(self.model).offset(skip).limit(limit)
         )
@@ -39,7 +39,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db: AsyncSession,
         obj_in: CreateSchemaType
     ) -> ModelType:
-        """Create new record."""
+        """Crea un nuevo registro en la BD a partir de los datos del schema."""
         db_obj = self.model(**obj_in.dict())
         db.add(db_obj)
         await db.flush()
@@ -52,7 +52,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db_obj: ModelType,
         obj_in: UpdateSchemaType
     ) -> ModelType:
-        """Update record."""
+        """Actualiza un registro existente. Solo cambia los campos que vienen en obj_in."""
         update_data = obj_in.dict(exclude_unset=True)
         for field, value in update_data.items():
             setattr(db_obj, field, value)
@@ -61,7 +61,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return db_obj
 
     async def delete(self, db: AsyncSession, id: int) -> bool:
-        """Delete record."""
+        """Elimina un registro por su ID. Devuelve True si lo encontró, False si no."""
         obj = await self.get(db, id)
         if obj:
             await db.delete(obj)

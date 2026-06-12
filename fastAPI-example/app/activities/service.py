@@ -23,6 +23,7 @@ async def log_activity(
     action_type: str,
     detail: str | None = None,
 ) -> None:
+    """Crea un registro de auditoría (ej: 'admin creó artista X'). Se usa en cada operación importante."""
     entry = ActivityModel(
         timestamp=datetime.utcnow(),
         username=username,
@@ -39,6 +40,7 @@ async def list_activities(
     limit: int = 100,
     caller_is_admin: bool = False,
 ) -> list[ActivityResponse]:
+    """Lista las actividades. Los usuarios no admin NO ven las actividades de usuarios admin."""
     query = select(ActivityModel).order_by(ActivityModel.activity_id.desc())
     if not caller_is_admin:
         admin_usernames = await _get_admin_usernames(db)

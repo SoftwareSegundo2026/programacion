@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse, FileResponse
 from contextlib import asynccontextmanager
 from sqlalchemy import text
 
@@ -15,7 +16,8 @@ setup_logging(settings.LOG_FILE_PATH, settings.LOG_LEVEL)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan events."""
+    """Al iniciar el servidor: crea tablas en la BD, agrega columnas extra
+    (ImageUrl, IsAdmin), crea usuarios demo. Al cerrar: libera la conexión."""
     # Startup
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -68,4 +70,9 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def read_root():
-    return {"message": "Hello from fastapi-example!"}
+    """Página principal con información de la API y links a la documentación."""
+    return FileResponse("static/index.html")
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return RedirectResponse(url="/static/favicon.svg")

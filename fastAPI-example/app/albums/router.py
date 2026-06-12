@@ -18,7 +18,7 @@ async def create(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Create new album."""
+    """POST /albums/ - Crea un álbum (requiere auth) y registra la acción."""
     album = await album_service.create(db, album_in)
     await log_activity(db, current_user.username, "create", f"Album: {album.Title} (id={album.AlbumId})")
     return album
@@ -28,7 +28,7 @@ async def read_one(
     album_id: int,
     db: AsyncSession = Depends(get_db)
 ):
-    """Get album by ID."""
+    """GET /albums/{id} - Devuelve un álbum por ID. Público."""
     album = await album_service.get_one(db, album_id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
@@ -40,7 +40,7 @@ async def read_all(
     limit: int = 100,
     db: AsyncSession = Depends(get_db)
 ):
-    """Get multiple albums."""
+    """GET /albums/ - Devuelve lista paginada de álbumes. Público."""
     albums = await album_service.get_all(db, skip, limit)
     return albums
 
@@ -51,7 +51,7 @@ async def update(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Update album."""
+    """PATCH /albums/{id} - Actualiza un álbum (requiere auth) y registra la acción."""
     album = await album_service.update(db, album_id, album_in)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
@@ -65,7 +65,7 @@ async def upload_image(
     db: AsyncSession = Depends(get_db),
     _: UserInDB = Depends(get_current_active_user),
 ):
-    """Upload an image for the album."""
+    """POST /albums/{id}/image - Sube una imagen para el álbum."""
     album = await album_service.get_one(db, album_id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
@@ -80,7 +80,7 @@ async def get_image(
     album_id: int,
     db: AsyncSession = Depends(get_db),
 ):
-    """Get the album's image file or a default placeholder."""
+    """GET /albums/{id}/image - Devuelve la imagen del álbum o un placeholder por defecto."""
     album = await album_service.get_one(db, album_id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
@@ -93,7 +93,7 @@ async def fetch_image(
     db: AsyncSession = Depends(get_db),
     _: UserInDB = Depends(get_current_active_user),
 ):
-    """Search Wikipedia for an image and assign it to the album."""
+    """POST /albums/{id}/fetch-image - Busca una imagen en Wikipedia y la asigna al álbum."""
     album = await album_service.get_one(db, album_id)
     if not album or not album.Title:
         raise HTTPException(status_code=404, detail="Album not found or has no title")
@@ -109,7 +109,7 @@ async def delete(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Delete album."""
+    """DELETE /albums/{id} - Elimina un álbum (requiere auth) y registra la acción."""
     deleted = await album_service.delete(db, album_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Album not found")

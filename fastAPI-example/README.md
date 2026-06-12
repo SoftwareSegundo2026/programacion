@@ -1,204 +1,207 @@
-# fastAPI-example
+# FastAPI Chinook API
 
-API REST en FastAPI con autenticación JWT, CRUD completo para artistas/álbumes/géneros/tracks, imágenes, activity logging y control de usuarios admin.
+API REST construida con **FastAPI** que expone la base de datos **Chinook** (tienda de música digital) a través de endpoints CRUD protegidos con autenticación **JWT**.
 
-## Stack
+Este proyecto es un ejemplo didáctico para aprender FastAPI con Python, pensado para alumnos de programación.
 
-- **FastAPI** — async web framework
-- **SQLAlchemy 2.0** (async) — ORM
-- **SQLite + aiosqlite** — base de datos (Chinook)
-- **python-jose + passlib** — JWT + bcrypt
-- **httpx** — Wikipedia API calls
-- **Pydantic v2** — validación
+---
 
-## Estructura del proyecto
+## ¿Qué incluye?
 
-```
-fastAPI-example/
-├── main.py                    # Entry point (uvicorn)
-├── app/
-│   ├── main.py                # FastAPI app (importado por main.py)
-│   ├── core/
-│   │   ├── config.py          # Settings via .env
-│   │   ├── database.py        # AsyncSession, Base, get_db
-│   │   ├── schemas.py         # CustomModel base
-│   │   ├── security.py        # JWT create/verify, bcrypt hash
-│   │   ├── logging.py         # setup_logging + get_logger
-│   │   ├── base_repository.py # BaseRepository genérico (CRUD)
-│   │   └── image_service.py   # Upload, Wikipedia fetch, placeholders
-│   ├── auth/                  # Autenticación JWT
-│   │   ├── model.py           # User (UserId, Username, Disabled, IsAdmin…)
-│   │   ├── schemas.py         # Token, User, UserInDB, UserCreate, UserLogin
-│   │   ├── service.py         # get_user, authenticate, create, change/reset password
-│   │   ├── seeder.py          # Crea admin + reader demo
-│   │   └── router.py          # POST /auth/token
-│   ├── users/                 # Gestión de usuarios
-│   │   ├── schemas.py         # UserUpdateDisabled, PasswordChange, PasswordReset
-│   │   └── router.py          # GET/POST /users, PATCH activate/deactivate, password
-│   ├── activities/            # Activity logging
-│   │   ├── model.py           # Activity (ActivityId, Timestamp, Username, ActionType, Detail)
-│   │   ├── schemas.py         # ActivityResponse
-│   │   ├── service.py         # log_activity, list_activities (filtra admins)
-│   │   └── router.py          # GET /activities (público, filtra por admin)
-│   ├── artists/               # CRUD + imágenes
-│   ├── albums/                # CRUD + imágenes
-│   ├── genres/                # CRUD
-│   ├── track/                 # CRUD
-│   └── api/
-│       ├── dependencies.py    # get_current_user, get_current_active_user, get_current_admin_user, get_optional_user
-│       └── v1/router.py       # Registro de todos los routers
-├── static/images/             # Uploads + default-artist.svg, default-album.svg
-├── instance/Chinook.db        # BD SQLite
-├── tests/
-│   ├── test_jwt_flow.py       # Login, token inválido, usuario inactivo
-│   └── test_track_flow.py     # CRUD de tracks autenticado
-└── .env                       # Configuración
-```
+- **CRUD completo** de Artistas, Álbumes, Géneros y Tracks (crear, leer, actualizar, eliminar)
+- **Autenticación JWT** con dos roles: `admin` y `reader` (usuario deshabilitado)
+- **Gestión de usuarios**: crear, activar/desactivar, cambiar/resetear contraseña, eliminar
+- **Activity Logging**: registro automático de cada operación (auditoría)
+- **Imágenes**: subida manual, búsqueda automática en Wikipedia, placeholders SVG por defecto
+- **Paginación** en todos los listados
+- **Documentación interactiva** vía Swagger UI
 
-## Base de datos
+---
 
-Usa [Chinook](https://www.sqlite.org/chinook.html) (`instance/Chinook.db`), una BD de muestra con tablas `Artist`, `Album`, `Track`, `Genre`, `MediaType` y relaciones.
+## Stack tecnológico
 
-Columnas agregadas vía migration en startup:
-- `Artist.ImageUrl`
-- `Album.ImageUrl`
-- `User.IsAdmin`
-
-Y tablas nuevas creadas por SQLAlchemy `create_all`:
-- `User`
-- `Activity`
-
-## Autenticación
-
-`POST /api/v1/auth/token`
-
-```json
-{ "username": "admin", "password": "admin123" }
-```
-
-```json
-{ "access_token": "eyJ...", "token_type": "bearer" }
-```
-
-### Usuarios demo
-
-| Usuario | Password | Admin | Activo |
-|---------|----------|-------|--------|
-| `admin` | `admin123` | Sí | Sí |
-| `reader` | `reader123` | No | No (disabled) |
-
-### Dependencias de seguridad
-
-| Dependencia | Uso |
+| Componente | Tecnología |
 |---|---|
-| `get_current_user` | Valida JWT, devuelve `UserInDB` o 401 |
-| `get_current_active_user` | Como arriba + verifica `disabled=False` |
-| `get_current_admin_user` | Como arriba + verifica `is_admin=True` o 403 |
-| `get_optional_user` | Devuelve `UserInDB` o `None` (no lanza error) |
+| Framework | FastAPI (async) |
+| ORM | SQLAlchemy 2.0 (async) |
+| Base de datos | SQLite + aiosqlite (Chinook) |
+| Autenticación | JWT (python-jose) + bcrypt (passlib) |
+| Validación | Pydantic v2 |
+| Servidor ASGI | Uvicorn |
+| Paquetería | uv |
 
-Las rutas GET de artists, albums, genres, tracks son públicas. POST/PATCH/DELETE requieren `get_current_active_user`.
+---
 
-## Endpoints
+## Puesta en marcha
 
-### Auth
+### 1. Requisitos
 
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| POST | `/auth/token` | — | Login, devuelve JWT |
+- Python ≥ 3.11
+- uv (gestor de paquetes y entornos virtuales)
 
-### Users
+### 2. Clonar e instalar
 
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| GET | `/users` | active | Lista usuarios (paginado: `?skip=0&limit=100`) |
-| POST | `/users` | active | Crear usuario |
-| PATCH | `/users/{id}` | admin | Activar/desactivar (`{"disabled": bool}`) |
-| PATCH | `/users/me/password` | active | Cambiar propia contraseña (`{"current_password", "new_password"}`) |
-| PATCH | `/users/{id}/password` | admin | Reset de contraseña (`{"new_password"}`) |
-
-### Artists
-
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| GET | `/artists` | — | Lista (paginado) |
-| GET | `/artists/{id}` | — | Obtener uno |
-| POST | `/artists` | active | Crear |
-| PATCH | `/artists/{id}` | active | Actualizar |
-| DELETE | `/artists/{id}` | active | Eliminar |
-| POST | `/artists/{id}/image` | active | Subir imagen |
-| GET | `/artists/{id}/image` | — | Obtener imagen |
-| POST | `/artists/{id}/fetch-image` | active | Buscar imagen en Wikipedia |
-
-### Albums
-
-Igual que Artists: `GET/POST/PATCH/DELETE /albums`, más `/albums/{id}/image` y `/albums/{id}/fetch-image`.
-
-### Genres / Tracks
-
-CRUD completo: `GET/POST/PATCH/DELETE /genres` y `/tracks`. Tracks incluye `AlbumTitle`, `GenreName`, `MediaTypeName` en respuestas.
-
-### Activities
-
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| GET | `/activities` | pública* | Lista actividades (paginado) |
-
-- **Admin** → ve todas
-- **Anónimo / usuario regular** → ve todas excepto las realizadas por admins
-
-Las actividades se registran automáticamente en: login, create/update/delete de cualquier entidad, cambios de contraseña, activate/deactivate de usuarios.
-
-## Imágenes
-
-Endpoints específicos para artists y albums:
-
-- **Subir**: `POST /{entity}/{id}/image` (multipart, soporta jpg/png/gif/webp)
-- **Servir**: `GET /{entity}/{id}/image` — devuelve el archivo subido, placeholder SVG por defecto (`default-artist.svg` / `default-album.svg`), o redirect a URL externa
-- **Wikipedia fetch**: `POST /{entity}/{id}/fetch-image` — busca en Wikipedia la imagen y la guarda localmente
-
-## Configuración
-
-Variables de entorno (`.env`):
-
+```bash
+git clone <repo>
+cd fastAPI-example
+uv sync
 ```
+
+### 3. Configurar `.env`
+
+Copiar `.env.example` a `.env` y ajustar si es necesario:
+
+```env
 DATABASE_URL=sqlite+aiosqlite:///./instance/Chinook.db
 SECRET_KEY=change-this-secret-key-for-jwt-development
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 API_V1_STR=/api/v1
 LOG_FILE_PATH=./instance/fastapi-example.log
-LOG_LEVEL=DEBUG
+LOG_LEVEL=INFO
 UPLOAD_DIR=./static/images
 ```
 
-## Ejecución
+### 4. Iniciar el servidor
 
 ```bash
-# Instalar dependencias
-uv sync
-
-# Activar venv
-source .venv/bin/activate
-
-# Iniciar servidor (hot reload)
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn main:app --reload
 ```
 
-## Swagger UI
+Esto inicia el servidor en `http://localhost:8000` con recarga automática ante cambios.
 
-`GET /docs` — Documentación interactiva. Pulsa `Authorize` y pega el token JWT para probar endpoints protegidos.
+### 5. Abrir la documentación interactiva
 
-## Logs
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
 
-Cada operación escribe trazas numeradas en consola y en `./instance/fastapi-example.log`. Además, las actividades se persisten en la tabla `Activity` y son consultables via `GET /activities`.
+---
+
+## Usuarios demo
+
+Al iniciar el servidor se crean automáticamente:
+
+| Usuario | Password | ¿Es admin? | ¿Está activo? |
+|---|---|---|---|
+| `admin` | `admin123` | Sí | Sí |
+| `reader` | `reader123` | No | No (deshabilitado) |
+
+Para probar, primero obtené un token:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/token \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "admin123"}'
+```
+
+Respuesta:
+
+```json
+{"access_token": "eyJ...", "token_type": "bearer"}
+```
+
+Luego usá ese token en el header `Authorization: Bearer eyJ...` para los endpoints protegidos.
+
+---
+
+## Endpoints principales
+
+### Públicos (no requieren token)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| GET | `/` | Health check |
+| GET | `/artists` | Listar artistas (paginado) |
+| GET | `/artists/{id}` | Obtener artista |
+| GET | `/artists/{id}/image` | Obtener imagen del artista |
+| GET | `/albums` | Listar álbumes (paginado) |
+| GET | `/albums/{id}` | Obtener álbum |
+| GET | `/albums/{id}/image` | Obtener imagen del álbum |
+| GET | `/genres` | Listar géneros |
+| GET | `/genres/{id}` | Obtener género |
+| GET | `/tracks` | Listar tracks |
+| GET | `/tracks/{id}` | Obtener track |
+| GET | `/activities` | Listar actividad (auditoría) |
+
+### Protegidos (requieren token, cualquier usuario activo)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| POST | `/artists` | Crear artista |
+| PATCH | `/artists/{id}` | Actualizar artista |
+| DELETE | `/artists/{id}` | Eliminar artista |
+| POST | `/artists/{id}/image` | Subir imagen |
+| POST | `/artists/{id}/fetch-image` | Buscar imagen en Wikipedia |
+| POST | `/albums` | Crear álbum |
+| PATCH | `/albums/{id}` | Actualizar álbum |
+| DELETE | `/albums/{id}` | Eliminar álbum |
+| POST | `/albums/{id}/image` | Subir imagen |
+| POST | `/albums/{id}/fetch-image` | Buscar imagen en Wikipedia |
+| POST | `/genres` | Crear género |
+| PATCH | `/genres/{id}` | Actualizar género |
+| DELETE | `/genres/{id}` | Eliminar género |
+| POST | `/tracks` | Crear track |
+| PATCH | `/tracks/{id}` | Actualizar track |
+| DELETE | `/tracks/{id}` | Eliminar track |
+| GET | `/users/me` | Ver perfil propio |
+| PATCH | `/users/me` | Actualizar perfil propio |
+| PATCH | `/users/me/password` | Cambiar propia contraseña |
+
+### Solo admin
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| PATCH | `/users/{id}` | Activar/desactivar usuario |
+| PATCH | `/users/{id}/password` | Resetear contraseña de otro usuario |
+| DELETE | `/users/{id}` | Eliminar usuario |
+
+---
+
+## Estructura del proyecto
+
+```
+fastAPI-example/
+├── main.py                    # Punto de entrada del servidor
+├── app/
+│   ├── main.py                # Configuración de la app FastAPI
+│   ├── core/                  # Capa transversal
+│   │   ├── config.py          # Configuración desde .env
+│   │   ├── database.py        # Conexión a BD (async SQLAlchemy)
+│   │   ├── security.py        # JWT y bcrypt
+│   │   ├── schemas.py         # Modelo base Pydantic
+│   │   ├── logging.py         # Sistema de logs
+│   │   ├── base_repository.py # CRUD genérico
+│   │   └── image_service.py   # Subida/Wikipedia/placeholders
+│   ├── api/
+│   │   ├── dependencies.py    # Dependencias de autenticación
+│   │   └── v1/router.py       # Registro de todos los routers
+│   ├── artists/               # CRUD + imágenes
+│   ├── albums/                # CRUD + imágenes
+│   ├── genres/                # CRUD
+│   ├── track/                 # CRUD
+│   ├── activities/            # Auditoría
+│   └── users/                 # Autenticación y gestión de usuarios
+├── static/images/             # Imágenes subidas + placeholders
+├── instance/Chinook.db        # Base de datos SQLite
+├── tests/                     # Tests automatizados
+└── scripts/                   # Utilidades para fetching de imágenes
+```
+
+Cada módulo de dominio sigue el patrón de 4 capas:
+
+```
+Router (HTTP) → Service (lógica) → Repository (BD) → Model (tabla SQLAlchemy)
+```
+
+---
 
 ## Tests
 
 ```bash
-python -m unittest discover -s tests -p "test_*.py"
+uv run python -m unittest discover -s tests -p "test_*.py"
 ```
 
-Cubre:
-- Login con credenciales válidas/incorrectas
-- Token expirado
-- Acceso de usuario inactivo
-- CRUD completo de Track autenticado
+---
+
+## Documentación inline
+
+Todas las funciones del proyecto tienen comentarios en español explicando qué hacen, para facilitar el aprendizaje de alumnos que cursan programación.

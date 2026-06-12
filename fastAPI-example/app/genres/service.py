@@ -4,7 +4,7 @@ from .repository import genre_repository
 from .schemas import Create, Update
 
 class GenreService:
-    """Business logic for genres."""
+    """Lógica de negocio para géneros. Delega las operaciones de BD al repositorio."""
 
     def __init__(self):
         self.repository = genre_repository

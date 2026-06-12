@@ -5,7 +5,7 @@ from .schemas import Create, Update
 from app.core.logging import get_logger
 
 class ArtistService:
-    """Business logic for artists."""
+    """Lógica de negocio para artistas. Delega las operaciones de BD al repositorio."""
 
     def __init__(self):
         self.repository = artist_repository

@@ -30,7 +30,7 @@ DEMO_USERS = [
 
 
 async def seed_demo_users(db: AsyncSession) -> None:
-    """Insert the demo users used by the authentication example."""
+    """Crea los usuarios de prueba 'admin' y 'reader' si no existen en la BD."""
     result = await db.execute(select(User.username))
     existing_usernames = set(result.scalars().all())
 

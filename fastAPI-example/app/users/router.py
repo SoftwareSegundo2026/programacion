@@ -16,7 +16,7 @@ async def login_for_access_token(
     credentials: UserLogin,
     db: AsyncSession = Depends(get_db),
 ) -> Token:
-    user = await authenticate_user(None, credentials.username, credentials.password)
+    """POST /auth/token - Login: recibe usuario/contraseña, devuelve un JWT."""
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -39,7 +39,7 @@ async def read_users(
     skip: int = 0,
     limit: int = 100,
 ) -> list[User]:
-    return await list_users(db, skip, limit)
+    """GET /users - Lista todos los usuarios (requiere auth)."""
 
 
 @router.post("", response_model=User, status_code=status.HTTP_201_CREATED)
@@ -48,6 +48,7 @@ async def create_new_user(
     current_user: UserInDB = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_db),
 ) -> User:
+    """POST /users - Crea un usuario nuevo (requiere auth). Devuelve 409 si el username/email ya existe."""
     try:
         user = await create_user(db, user_in)
     except ValueError as error:
@@ -62,6 +63,7 @@ async def update_current_user(
     current_user: UserInDB = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_db),
 ) -> User:
+    """PATCH /users/me - Actualiza el perfil del usuario autenticado."""
     user = await update_user_profile(db, current_user.username, body.full_name, body.email)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
@@ -76,6 +78,7 @@ async def toggle_user_disabled(
     current_user: UserInDB = Depends(get_current_admin_user),
     db: AsyncSession = Depends(get_db),
 ) -> User:
+    """PATCH /users/{id} - Admin: activa o desactiva un usuario."""
     user = await update_user_disabled(db, user_id, body.disabled)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
@@ -88,6 +91,7 @@ async def toggle_user_disabled(
 async def read_current_user(
     current_user: UserInDB = Depends(get_current_active_user),
 ) -> User:
+    """GET /users/me - Devuelve los datos del usuario autenticado."""
     return User.model_validate(current_user)
 
 
@@ -97,6 +101,7 @@ async def change_own_password(
     current_user: UserInDB = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_db),
 ) -> None:
+    """PATCH /users/me/password - Cambia la propia contraseña."""
     ok = await change_password(db, current_user.username, body.current_password, body.new_password)
     if not ok:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current password is incorrect")
@@ -110,6 +115,7 @@ async def reset_user_password(
     current_user: UserInDB = Depends(get_current_admin_user),
     db: AsyncSession = Depends(get_db),
 ) -> None:
+    """PATCH /users/{id}/password - Admin: resetea la contraseña de otro usuario."""
     ok = await reset_password(db, user_id, body.new_password)
     if not ok:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
@@ -122,6 +128,7 @@ async def remove_user(
     current_user: UserInDB = Depends(get_current_admin_user),
     db: AsyncSession = Depends(get_db),
 ) -> None:
+    """DELETE /users/{id} - Admin: elimina un usuario."""
     ok = await delete_user(db, user_id)
     if not ok:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

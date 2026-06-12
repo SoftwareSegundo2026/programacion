@@ -20,7 +20,7 @@ async def create(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Create new artist."""
+    """POST /artists/ - Crea un artista (requiere auth) y registra la acción."""
     artist = await artist_service.create(db, artist_in)
     await log_activity(db, current_user.username, "create", f"Artist: {artist.Name} (id={artist.ArtistId})")
     return artist
@@ -30,7 +30,7 @@ async def read_one(
     artist_id: int,
     db: AsyncSession = Depends(get_db)
 ):
-    """Get artist by ID."""
+    """GET /artists/{id} - Devuelve un artista por ID. Público."""
     artist = await artist_service.get_one(db, artist_id)
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
@@ -42,7 +42,7 @@ async def read_all(
     limit: int = 100,
     db: AsyncSession = Depends(get_db)
 ):
-    """Get multiple artists."""
+    """GET /artists/ - Devuelve lista paginada de artistas. Público."""
     logger.info("3. artists.read_all - tarea=recibir GET /artists y delegar al service")
     artists = await artist_service.get_all(db, skip, limit)
     logger.info("6. artists.read_all - tarea=retornar artistas al cliente - cantidad=%s", len(artists))
@@ -55,7 +55,7 @@ async def update(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Update artist."""
+    """PATCH /artists/{id} - Actualiza un artista (requiere auth) y registra la acción."""
     artist = await artist_service.update(db, artist_id, artist_in)
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
@@ -69,7 +69,7 @@ async def upload_image(
     db: AsyncSession = Depends(get_db),
     _: UserInDB = Depends(get_current_active_user),
 ):
-    """Upload an image for the artist."""
+    """POST /artists/{id}/image - Sube una imagen para el artista."""
     artist = await artist_service.get_one(db, artist_id)
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
@@ -84,7 +84,7 @@ async def get_image(
     artist_id: int,
     db: AsyncSession = Depends(get_db),
 ):
-    """Get the artist's image file or a default placeholder."""
+    """GET /artists/{id}/image - Devuelve la imagen del artista o un placeholder por defecto."""
     artist = await artist_service.get_one(db, artist_id)
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
@@ -97,7 +97,7 @@ async def fetch_image(
     db: AsyncSession = Depends(get_db),
     _: UserInDB = Depends(get_current_active_user),
 ):
-    """Search Wikipedia for an image and assign it to the artist."""
+    """POST /artists/{id}/fetch-image - Busca una imagen en Wikipedia y la asigna al artista."""
     artist = await artist_service.get_one(db, artist_id)
     if not artist or not artist.Name:
         raise HTTPException(status_code=404, detail="Artist not found or has no name")
@@ -113,7 +113,7 @@ async def delete(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Delete artist."""
+    """DELETE /artists/{id} - Elimina un artista (requiere auth) y registra la acción."""
     deleted = await artist_service.delete(db, artist_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Artist not found")

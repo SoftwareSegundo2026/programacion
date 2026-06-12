@@ -5,7 +5,7 @@ from .model import Artist
 from .schemas import Create, Update
 
 class ArtistRepository(BaseRepository[Artist, Create, Update]):
-    """Artist-specific repository."""
+    """Repositorio de artistas. Agrega el método get_by_name para buscar por nombre exacto."""
 
     def __init__(self, model):
         super().__init__(model)
@@ -17,7 +17,7 @@ class ArtistRepository(BaseRepository[Artist, Create, Update]):
         return await super().get_multi(db, skip, limit)
 
     async def get_by_name(self, db, name: str):
-        """Get artist by name."""
+        """Busca un artista por su nombre exacto."""
         result = await db.execute(
             select(Artist).where(Artist.Name == name)
         )

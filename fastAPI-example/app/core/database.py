@@ -20,7 +20,7 @@ AsyncSessionLocal = sessionmaker(
 Base = declarative_base()
 
 async def get_db() -> AsyncSession:
-    """Dependency for database session."""
+    """Abre una conexión a la BD, la entrega para usarla, y la cierra automáticamente."""
     async with AsyncSessionLocal() as session:
         try:
             yield session

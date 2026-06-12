@@ -5,7 +5,7 @@ from .schemas import Create, Update
 
 
 class TrackService:
-    """Business logic for tracks."""
+    """Lógica de negocio para tracks. Delega las operaciones de BD al repositorio."""
 
     def __init__(self):
         self.repository = track_repository

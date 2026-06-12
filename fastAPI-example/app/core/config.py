@@ -3,7 +3,7 @@ from functools import lru_cache
 import os
 
 class Settings(BaseSettings):
-    """Application settings."""
+    """Lee la configuración desde el archivo .env (URL de BD, clave JWT, etc.)."""
     DATABASE_URL: str = "sqlite+aiosqlite:///./instance/Chinook.db"
     SECRET_KEY: str = "your-secret-key-here"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
@@ -17,4 +17,5 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
+    """Devuelve la configuración. Solo se crea una vez y se reutiliza (singleton)."""
     return Settings()

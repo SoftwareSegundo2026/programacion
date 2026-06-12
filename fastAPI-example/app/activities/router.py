@@ -18,5 +18,6 @@ async def read_activities(
     skip: int = 0,
     limit: int = 100,
 ) -> list[ActivityResponse]:
+    """GET /activities - Devuelve actividades paginadas. Si el usuario no es admin, oculta actividades de admins."""
     caller_is_admin = current_user is not None and current_user.is_admin and not current_user.disabled
     return await list_activities(db, skip, limit, caller_is_admin)

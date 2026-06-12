@@ -17,7 +17,7 @@ async def create(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Create new genre."""
+    """POST /genres/ - Crea un género (requiere auth) y registra la acción."""
     genre = await genre_service.create(db, genre_in)
     await log_activity(db, current_user.username, "create", f"Genre: {genre.Name} (id={genre.GenreId})")
     return genre
@@ -27,7 +27,7 @@ async def read_one(
     genre_id: int,
     db: AsyncSession = Depends(get_db)
 ):
-    """Get genre by ID."""
+    """GET /genres/{id} - Devuelve un género por ID. Público."""
     genre = await genre_service.get_one(db, genre_id)
     if not genre:
         raise HTTPException(status_code=404, detail="Genre not found")
@@ -39,7 +39,7 @@ async def read_all(
     limit: int = 100,
     db: AsyncSession = Depends(get_db)
 ):
-    """Get multiple genres."""
+    """GET /genres/ - Devuelve lista paginada de géneros. Público."""
     genres = await genre_service.get_all(db, skip, limit)
     return genres
 
@@ -50,7 +50,7 @@ async def update(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Update genre."""
+    """PATCH /genres/{id} - Actualiza un género (requiere auth) y registra la acción."""
     genre = await genre_service.update(db, genre_id, genre_in)
     if not genre:
         raise HTTPException(status_code=404, detail="Genre not found")
@@ -63,7 +63,7 @@ async def delete(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Delete genre."""
+    """DELETE /genres/{id} - Elimina un género (requiere auth) y registra la acción."""
     deleted = await genre_service.delete(db, genre_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Genre not found")

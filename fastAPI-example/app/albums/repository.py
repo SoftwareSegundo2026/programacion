@@ -5,7 +5,7 @@ from .model import Album
 from .schemas import Create, Update
 
 class AlbumRepository(BaseRepository[Album, Create, Update]):
-    """Album-specific repository."""
+    """Repositorio de álbumes. Sobrescribe get/get_multi para cargar también el nombre del artista."""
 
     async def get(self, db, id: int):
         """Get album by ID with artist name."""

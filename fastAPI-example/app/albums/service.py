@@ -4,7 +4,7 @@ from .repository import album_repository
 from .schemas import Create, Update
 
 class AlbumService:
-    """Business logic for albums."""
+    """Lógica de negocio para álbumes. Delega las operaciones de BD al repositorio."""
 
     def __init__(self):
         self.repository = album_repository

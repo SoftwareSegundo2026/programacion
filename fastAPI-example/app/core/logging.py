@@ -7,7 +7,7 @@ _CONFIGURED_LOGGERS: set[str] = set()
 
 
 def setup_logging(log_file_path: str, level: str = "INFO") -> None:
-    """Configure application logging once."""
+    """Configura el sistema de logs: escribe en consola y en un archivo .log."""
     root_logger = logging.getLogger()
 
     log_path = Path(log_file_path)
@@ -41,7 +41,7 @@ def setup_logging(log_file_path: str, level: str = "INFO") -> None:
 
 
 def get_logger(name: str) -> Logger:
-    """Return a module logger for request-flow traces."""
+    """Devuelve un 'logger' para que cada módulo escriba sus propios mensajes de seguimiento."""
     if name in _CONFIGURED_LOGGERS:
         return logging.getLogger(name)
 

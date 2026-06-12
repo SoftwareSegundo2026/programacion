@@ -19,7 +19,7 @@ async def create(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Create new track."""
+    """POST /tracks - Crea un track (requiere auth) y registra la acción."""
     track = await track_service.create(db, track_in)
     await log_activity(db, current_user.username, "create", f"Track: {track.Name} (id={track.TrackId})")
     return track
@@ -30,7 +30,7 @@ async def read_one(
     track_id: int,
     db: AsyncSession = Depends(get_db)
 ):
-    """Get track by ID."""
+    """GET /tracks/{id} - Devuelve un track por ID. Público."""
     track = await track_service.get_one(db, track_id)
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
@@ -43,7 +43,7 @@ async def read_all(
     limit: int = 100,
     db: AsyncSession = Depends(get_db)
 ):
-    """Get multiple tracks."""
+    """GET /tracks - Devuelve lista paginada de tracks. Público."""
     tracks = await track_service.get_all(db, skip, limit)
     return tracks
 
@@ -55,7 +55,7 @@ async def update(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Update track."""
+    """PATCH /tracks/{id} - Actualiza un track (requiere auth) y registra la acción."""
     track = await track_service.update(db, track_id, track_in)
     if not track:
         raise HTTPException(status_code=404, detail="Track not found")
@@ -69,7 +69,7 @@ async def delete(
     db: AsyncSession = Depends(get_db),
     current_user: UserInDB = Depends(get_current_active_user),
 ):
-    """Delete track."""
+    """DELETE /tracks/{id} - Elimina un track (requiere auth) y registra la acción."""
     deleted = await track_service.delete(db, track_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Track not found")

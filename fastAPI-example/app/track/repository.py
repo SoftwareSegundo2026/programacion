@@ -8,7 +8,7 @@ from .schemas import Create, Update
 
 
 class TrackRepository(BaseRepository[Track, Create, Update]):
-    """Track-specific repository."""
+    """Repositorio de tracks. Carga también los datos relacionados (álbum, género, tipo de medio)."""
 
     async def create(self, db, obj_in: Create):
         """Create track and reload it with relationships."""

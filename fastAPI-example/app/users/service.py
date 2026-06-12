@@ -15,6 +15,7 @@ settings = get_settings()
 
 
 async def get_user(db: AsyncSession | None, username: str) -> Optional[UserInDB]:
+    """Busca un usuario por su nombre de usuario en la BD."""
     if db is None:
         async with AsyncSessionLocal() as session:
             return await get_user(session, username)
@@ -27,6 +28,7 @@ async def get_user(db: AsyncSession | None, username: str) -> Optional[UserInDB]
 
 
 async def authenticate_user(db: AsyncSession | None, username: str, password: str) -> Optional[UserInDB]:
+    """Verifica usuario y contraseña. Devuelve el usuario si son correctos, None si no."""
     user = await get_user(db, username)
     if user is None:
         return None
@@ -36,6 +38,7 @@ async def authenticate_user(db: AsyncSession | None, username: str, password: st
 
 
 async def list_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[User]:
+    """Devuelve lista paginada de usuarios (sin contraseñas)."""
     result = await db.execute(
         select(UserModel).order_by(UserModel.user_id).offset(skip).limit(limit)
     )
@@ -43,6 +46,7 @@ async def list_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> list[
 
 
 async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
+    """Crea un usuario nuevo. Si el username o email ya existen, lanza error."""
     result = await db.execute(
         select(UserModel).where(
             or_(
@@ -69,6 +73,7 @@ async def create_user(db: AsyncSession, user_in: UserCreate) -> User:
 
 
 async def update_user_profile(db: AsyncSession, username: str, full_name: str | None, email: str | None) -> User | None:
+    """Actualiza el nombre completo y/o email de un usuario."""
     result = await db.execute(select(UserModel).where(UserModel.username == username))
     user = result.scalars().first()
     if user is None:
@@ -83,6 +88,7 @@ async def update_user_profile(db: AsyncSession, username: str, full_name: str | 
 
 
 async def update_user_disabled(db: AsyncSession, user_id: int, disabled: bool) -> User | None:
+    """Activa o desactiva un usuario (solo para admin)."""
     result = await db.execute(select(UserModel).where(UserModel.user_id == user_id))
     user = result.scalars().first()
     if user is None:
@@ -100,6 +106,7 @@ async def change_password(
     new_password: str,
     user_id: int | None = None,
 ) -> bool:
+    """Verifica la contraseña actual y la cambia por una nueva."""
     if user_id is not None:
         result = await db.execute(select(UserModel).where(UserModel.user_id == user_id))
     elif username is not None:
@@ -117,11 +124,13 @@ async def change_password(
 
 
 def create_user_access_token(user: UserInDB) -> str:
+    """Crea un JWT para el usuario (usado después del login exitoso)."""
     expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return create_access_token({"sub": user.username}, expires_delta=expires_delta)
 
 
 async def reset_password(db: AsyncSession, user_id: int, new_password: str) -> bool:
+    """Admin: cambia la contraseña de otro usuario directamente."""
     result = await db.execute(select(UserModel).where(UserModel.user_id == user_id))
     user = result.scalars().first()
     if user is None:
@@ -132,6 +141,7 @@ async def reset_password(db: AsyncSession, user_id: int, new_password: str) -> b
 
 
 async def delete_user(db: AsyncSession, user_id: int) -> bool:
+    """Elimina un usuario por su ID."""
     result = await db.execute(select(UserModel).where(UserModel.user_id == user_id))
     user = result.scalars().first()
     if user is None:

@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 def datetime_to_iso_str(dt: datetime) -> str:
-    return dt.isoformat()
+    """Convierte una fecha a texto legible (formato ISO) para enviarla en JSON."""
 
 class CustomModel(BaseModel):
     model_config = ConfigDict(

@@ -15,7 +15,7 @@ setup_logging(settings.LOG_FILE_PATH, settings.LOG_LEVEL)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan events."""
+    """Al iniciar: crea tablas, agrega columnas extra (ImageUrl, IsAdmin) y crea usuarios demo. Al cerrar: libera la conexión."""
     # Startup
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -69,4 +69,5 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def read_root():
+    """Endpoint de prueba: devuelve un mensaje para verificar que el servidor funciona."""
     return {"message": "Hello from fastapi-example!"}
