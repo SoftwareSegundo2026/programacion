@@ -9,7 +9,7 @@ class Token(CustomModel):
 
 
 class TokenData(CustomModel):
-    sub: Optional[str] = None
+    sub: str
 
 
 class UserLogin(CustomModel):

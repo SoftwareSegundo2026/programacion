@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar, Type, Optional, List
+from typing import Generic, TypeVar, Type, Optional, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel
@@ -27,7 +27,7 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db: AsyncSession,
         skip: int = 0,
         limit: int = 100
-    ) -> List[ModelType]:
+    ) -> Sequence[ModelType]:
         """Trae varios registros con paginación (skip = cuántos saltar, limit = cuántos traer)."""
         result = await db.execute(
             select(self.model).offset(skip).limit(limit)
