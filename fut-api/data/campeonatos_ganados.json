@@ -1,0 +1,15 @@
+[
+  { "id": 1, "equipo_id": 1, "torneo_id": 1, "posicion": "CAMPEON" },
+  { "id": 2, "equipo_id": 2, "torneo_id": 1, "posicion": "SUBCAMPEON" },
+  { "id": 3, "equipo_id": 6, "torneo_id": 2, "posicion": "CAMPEON" },
+  { "id": 4, "equipo_id": 8, "torneo_id": 2, "posicion": "SUBCAMPEON" },
+  { "id": 5, "equipo_id": 5, "torneo_id": 4, "posicion": "CAMPEON" },
+  { "id": 6, "equipo_id": 21, "torneo_id": 8, "posicion": "CAMPEON" },
+  { "id": 7, "equipo_id": 22, "torneo_id": 8, "posicion": "SUBCAMPEON" },
+  { "id": 8, "equipo_id": 16, "torneo_id": 6, "posicion": "CAMPEON" },
+  { "id": 9, "equipo_id": 17, "torneo_id": 6, "posicion": "SUBCAMPEON" },
+  { "id": 10, "equipo_id": 26, "torneo_id": 7, "posicion": "CAMPEON" },
+  { "id": 11, "equipo_id": 20, "torneo_id": 7, "posicion": "SUBCAMPEON" },
+  { "id": 12, "equipo_id": 23, "torneo_id": 9, "posicion": "CAMPEON" },
+  { "id": 13, "equipo_id": 3, "torneo_id": 1, "posicion": "TERCERO" }
+]

@@ -1,0 +1,5 @@
+[
+  { "id": 1, "nombre": "Argentina", "codigo_iso": "AR" },
+  { "id": 2, "nombre": "España", "codigo_iso": "ES" },
+  { "id": 3, "nombre": "Italia", "codigo_iso": "IT" }
+]

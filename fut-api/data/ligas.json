@@ -1,0 +1,7 @@
+[
+  { "id": 1, "nombre": "Primera División Argentina", "pais_id": 1, "categoria": 1, "tipo": "liga" },
+  { "id": 2, "nombre": "Segunda División Argentina", "pais_id": 1, "categoria": 2, "tipo": "liga" },
+  { "id": 3, "nombre": "Copa Argentina", "pais_id": 1, "categoria": 0, "tipo": "copa" },
+  { "id": 4, "nombre": "La Liga", "pais_id": 2, "categoria": 1, "tipo": "liga" },
+  { "id": 5, "nombre": "Serie A", "pais_id": 3, "categoria": 1, "tipo": "liga" }
+]

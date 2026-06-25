@@ -1,0 +1,10 @@
+[
+  { "id": 1, "nombre": "Club Atlético Albion", "ciudad_id": 1, "fundacion": 1905, "estadio": "Estadio Albion", "capacidad": 35000 },
+  { "id": 2, "nombre": "Sociedad Deportiva Central", "ciudad_id": 3, "fundacion": 1910, "estadio": "Gigante del Arroyo", "capacidad": 42000 },
+  { "id": 3, "nombre": "Club Deportivo Austral", "ciudad_id": 2, "fundacion": 1920, "estadio": "Estadio del Sur", "capacidad": 28000 },
+  { "id": 4, "nombre": "Asociación Atlética Porteña", "ciudad_id": 8, "fundacion": 1915, "estadio": "Estadio Puerto", "capacidad": 22000 },
+  { "id": 5, "nombre": "Real Madrid FC", "ciudad_id": 5, "fundacion": 1902, "estadio": "Santiago Bernabéu", "capacidad": 81000 },
+  { "id": 6, "nombre": "FC Barcelona", "ciudad_id": 6, "fundacion": 1899, "estadio": "Camp Nou", "capacidad": 99350 },
+  { "id": 7, "nombre": "AC Milan", "ciudad_id": 7, "fundacion": 1899, "estadio": "San Siro", "capacidad": 75000 },
+  { "id": 8, "nombre": "Club Atlético Unión", "ciudad_id": 4, "fundacion": 1918, "estadio": "Estadio Unión", "capacidad": 18000 }
+]

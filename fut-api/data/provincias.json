@@ -1,0 +1,8 @@
+[
+  { "id": 1, "nombre": "Buenos Aires", "pais_id": 1 },
+  { "id": 2, "nombre": "Córdoba", "pais_id": 1 },
+  { "id": 3, "nombre": "Santa Fe", "pais_id": 1 },
+  { "id": 4, "nombre": "Madrid", "pais_id": 2 },
+  { "id": 5, "nombre": "Barcelona", "pais_id": 2 },
+  { "id": 6, "nombre": "Lombardía", "pais_id": 3 }
+]
