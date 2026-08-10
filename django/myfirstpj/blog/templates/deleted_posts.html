@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Posts eliminados{% endblock %}
+
+{% block content %}
+    <div class="mb-6 rounded-2xl bg-white p-6 shadow-sm">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900">Posts eliminados</h1>
+                <p class="text-slate-500">Recuperá los posts eliminados mediante soft delete.</p>
+            </div>
+            <a href="{% url 'getPosts' %}" class="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-slate-700">Volver al listado</a>
+        </div>
+    </div>
+
+    <div class="space-y-4">
+        {% for post in posts %}
+            <article class="rounded-2xl bg-white p-6 shadow-sm">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-slate-900">{{ post.title }}</h2>
+                        <p class="mt-3 text-slate-700">{{ post.content }}</p>
+                        <p class="mt-4 text-sm text-slate-500">Eliminado el {{ post.deleted_at }}</p>
+                    </div>
+                    <form action="{% url 'restorePost' post.id %}" method="post" class="shrink-0">
+                        {% csrf_token %}
+                        <button type="submit" class="rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600">Recuperar</button>
+                    </form>
+                </div>
+            </article>
+        {% empty %}
+            <div class="rounded-2xl bg-white p-6 text-slate-600 shadow-sm">No hay posts eliminados.</div>
+        {% endfor %}
+    </div>
+{% endblock %}
