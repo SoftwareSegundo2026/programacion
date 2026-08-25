@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<article class="post-detail">
+    <div class="section-header">
+        <div class="section-header__eyebrow">Detalle</div>
+        <h1 class="section-title">{{ post.title }}</h1>
+        <p class="section-subtitle">
+            Publicado el {{ post.created_at|date:"d/m/Y H:i" }}
+            {% if post.categoria %}
+            • {{ post.get_categoria_display }}
+            {% endif %}
+        </p>
+    </div>
+
+    {% if post.imagen %}
+    <div class="post-detail__media">
+        <img src="{{ post.imagen.url }}" alt="{{ post.title }}" class="post-detail__image">
+    </div>
+    {% endif %}
+
+    <div class="post-detail__content">
+        {{ post.content|linebreaks }}
+    </div>
+
+    <div class="post-detail__actions">
+        <a href="{% url 'getPosts' %}" class="btn btn-ghost">← Volver al blog</a>
+    </div>
+</article>
+{% endblock %}
+{% block extra_css %}
+<style>
+.post-detail {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.post-detail__media {
+    width: 100%;
+    max-height: 500px;
+    overflow: hidden;
+    border-radius: var(--radius-cards);
+    margin-bottom: var(--spacing-24);
+}
+
+.post-detail__image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.post-detail__content {
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    color: var(--color-charcoal);
+    white-space: pre-wrap;
+}
+
+.post-detail__actions {
+    margin-top: var(--spacing-24);
+    padding-top: var(--spacing-16);
+    border-top: var(--border-mist);
+}
+</style>
+{% endblock %}

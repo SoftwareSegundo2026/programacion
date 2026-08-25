@@ -3,12 +3,18 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
+from .forms import PostForm
 from .models import Post
 
 
 def getPosts(request):
     posts = Post.objects.filter(deleted_at__isnull=True)
     return render(request, 'post_list.html', {'posts': posts})
+
+
+def verPost(request, post_id):
+    post = get_object_or_404(Post, id=post_id, deleted_at__isnull=True)
+    return render(request, 'post_detail.html', {'post': post})
 
 
 @login_required
@@ -39,17 +45,12 @@ def restorePost(request, post_id):
 @login_required
 def createPost(request):
     if request.method == 'POST':
-        title = request.POST.get('title', '').strip()
-        content = request.POST.get('content', '').strip()
-        if title and content:
-            Post.objects.create(title=title, content=content)
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
             messages.success(request, 'Post creado correctamente.')
             return redirect('getPosts')
+    else:
+        form = PostForm()
 
-        return render(request, 'post_form.html', {
-            'error': 'El titulo y el contenido son obligatorios.',
-            'title': title,
-            'content': content,
-        })
-
-    return render(request, 'post_form.html')
+    return render(request, 'post_form.html', {'form': form})

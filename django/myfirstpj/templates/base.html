@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mi Blog{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="site-body">
+    {% block nav %}
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a href="{% url 'getPosts' %}" class="site-header__brand">Mi Blog</a>
+            <nav class="site-header__nav" aria-label="Navegación principal">
+                <ul class="site-header__nav-list">
+                    <li><a href="{% url 'getPosts' %}" class="site-header__nav-link {% if request.resolver_match.url_name == 'getPosts' %}active{% endif %}">Inicio</a></li>
+                    <li><a href="{% url 'lista_tareas' %}" class="site-header__nav-link {% if request.resolver_match.url_name == 'lista_tareas' %}active{% endif %}">Tareas</a></li>
+                    <li><a href="{% url 'deletedPosts' %}" class="site-header__nav-link {% if request.resolver_match.url_name == 'deletedPosts' %}active{% endif %}">Eliminados</a></li>
+                </ul>
+            </nav>
+            <div class="site-header__actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'createPost' %}" class="btn btn-primary">Crear post</a>
+                    <span class="site-header__divider"></span>
+                    <a href="{% url 'ver_perfil' %}" class="btn btn-ghost">{{ user.username }}</a>
+                    <a href="{% url 'logout' %}" class="btn btn-ghost">Salir</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-ghost">Iniciar sesion</a>
+                    <a href="{% url 'register' %}" class="btn btn-primary">Registrarse</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    {% endblock %}
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert--{{ message.tags|default:'neutral' }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    <footer class="site-footer">
+        <div class="site-footer__inner">
+            <a href="{% url 'getPosts' %}" class="site-footer__brand">Mi Blog</a>
+            <ul class="site-footer__links">
+                <li><a href="{% url 'getPosts' %}">Inicio</a></li>
+                <li><a href="{% url 'lista_tareas' %}">Tareas</a></li>
+                <li><a href="{% url 'deletedPosts' %}">Eliminados</a></li>
+            </ul>
+            <p class="site-footer__copy">Un producto de QS Software</p>
+        </div>
+    </footer>
+    {% endblock %}
+</body>
+</html>

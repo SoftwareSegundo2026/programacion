@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Posts eliminados{% endblock %}
+
+{% block content %}
+<div class="deleted-post-list">
+    <div class="section-header">
+        <div class="section-header__eyebrow">Recuperable</div>
+        <h1 class="section-title">Posts eliminados</h1>
+        <p class="section-subtitle">Recuperá posts eliminados mediante soft delete.</p>
+    </div>
+
+    <div class="deleted-post-list__actions">
+        <a href="{% url 'getPosts' %}" class="btn btn-ghost">Volver al listado</a>
+    </div>
+
+    {% for post in posts %}
+    <article class="deleted-post-card">
+        <div class="deleted-post-card__header">
+            <h2 class="deleted-post-card__title">{{ post.title }}</h2>
+            <p class="deleted-post-card__date">Eliminado el {{ post.deleted_at|date:"d/m/Y H:i" }}</p>
+        </div>
+        <div class="deleted-post-card__body">
+            <div class="deleted-post-card__content">
+                {{ post.content|linebreaksbr|truncatewords:40 }}
+            </div>
+        </div>
+        <div class="deleted-post-card__footer">
+            <div class="deleted-post-card__actions">
+                <form action="{% url 'restorePost' post.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-ghost">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M3 8l3.5 3.5L13 5M6 5l-3 3M8 11l3-3M5 11h6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Recuperar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </article>
+    {% empty %}
+    <div class="deleted-post-list--empty">
+        <div class="empty-state__icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#9d9ea1" stroke-width="1.5">
+                <circle cx="16" cy="18" r="8" fill="#f6f7f8" stroke="#9d9ea1"/>
+                <path d="M28 20l-8 8h10" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <h2 class="empty-state__title">No hay posts eliminados</h2>
+        <p class="empty-state__subtitle">Eliminando es temporal — podés recuperar cualquier post en cualquier momento.</p>
+        <a href="{% url 'getPosts' %}" class="btn btn-ghost">Volver al listado</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

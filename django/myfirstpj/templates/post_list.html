@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Blog{% endblock %}
+
+{% block content %}
+<div class="post-list">
+    <div class="section-header">
+        <div class="section-header__eyebrow">Listado</div>
+        <h1 class="section-title">Mi blog</h1>
+        <p class="section-subtitle">Publicaciones recientes.</p>
+    </div>
+
+    <div class="post-list__actions">
+        <a href="{% url 'deletedPosts' %}" class="btn btn-ghost">Ver eliminados</a>
+        <a href="{% url 'createPost' %}" class="btn btn-primary">Crear post</a>
+    </div>
+
+    <div class="posts-grid">
+        {% for post in posts %}
+        <article class="post-card">
+            {% if post.imagen %}
+            <div class="post-card__media">
+                <img src="{{ post.imagen.url }}" alt="{{ post.title }}" class="post-card__image">
+            </div>
+            {% endif %}
+            <div class="post-card__header">
+                <h2 class="post-card__title">
+                    <a href="{% url 'verPost' post.id %}" class="post-card__title-link">{{ post.title }}</a>
+                </h2>
+                <p class="post-card__date">Publicado el {{ post.created_at|date:"d/m/Y H:i" }}</p>
+            </div>
+            <div class="post-card__body">
+                <div class="post-card__content">
+                    {{ post.content|linebreaksbr|truncatewords:30 }}
+                </div>
+            </div>
+            <div class="post-card__footer">
+                <div class="post-card__tags">
+                    {% if post.categoria %}
+                    <span class="badge badge--category-blossom">{{ post.get_categoria_display }}</span>
+                    {% endif %}
+                    <span class="badge badge--status">Publicado</span>
+                </div>
+                <a href="{% url 'verPost' post.id %}" class="btn btn-primary btn--sm">Ver detalle →</a>
+            </div>
+            <div class="post-card__actions">
+                <form action="{% url 'deletePost' post.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete" title="Eliminar post">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 4l8 8M12 4l-8 8" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </article>
+        {% empty %}
+        <div class="post-list--empty">
+            <div class="post-list--empty-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#9d9ea1" stroke-width="1.5">
+                    <rect x="8" y="12" width="32" height="28" rx="4"/>
+                    <path d="M16 20h16M16 26h10" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2 class="post-list--empty-title">Aún no hay posts</h2>
+            <p class="post-list--empty-subtitle">Sos el primero en publicar.</p>
+            <a href="{% url 'createPost' %}" class="btn btn-primary">Crear primer post</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+{% block extra_css %}
+<style>
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--spacing-16);
+    margin-top: var(--spacing-8);
+}
+
+.post-card__media {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.post-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.post-card:hover .post-card__image {
+    transform: scale(1.05);
+}
+
+.post-card__title-link {
+    color: var(--color-midnight-ink);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.post-card__title-link:hover {
+    color: var(--color-electric-iris);
+}
+
+.post-card__title {
+    font-family: var(--font-display);
+    font-size: var(--text-heading-sm);
+    font-weight: var(--font-weight-w370);
+    color: var(--color-midnight-ink);
+    letter-spacing: -0.06em;
+    line-height: var(--leading-heading-sm);
+    margin: 0 0 var(--spacing-4) 0;
+}
+
+.post-card__date {
+    font-size: var(--text-caption);
+    color: var(--color-ash);
+    letter-spacing: -0.006em;
+    margin: 0;
+}
+
+.post-card__content {
+    font-size: var(--text-body);
+    color: var(--color-charcoal);
+    line-height: var(--leading-body);
+}
+
+.post-card__footer {
+    padding: var(--spacing-12) var(--card-padding) var(--card-padding);
+    border-top: var(--border-mist);
+    background-color: var(--surface-fog);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-8);
+}
+
+.post-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+}
+
+.post-card__actions {
+    flex-shrink: 0;
+}
+
+.btn-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-buttons);
+    background-color: var(--color-pearl);
+    color: var(--color-charcoal);
+    border: 1px solid var(--color-mist);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-delete:hover {
+    background-color: var(--color-crimson-ink);
+    color: #ffffff;
+    border-color: var(--color-crimson-ink);
+}
+
+.btn-delete:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-subtle-3);
+}
+
+.badge--status {
+    background-color: var(--color-mint-whisper);
+    color: var(--color-forest-ink);
+    border-color: var(--color-forest-ink);
+}
+
+.post-list--empty-icon {
+    margin-bottom: var(--spacing-12);
+}
+
+@media (max-width: 768px) {
+    .posts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
