@@ -1,11 +1,18 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib.auth.models import User
 from django.utils import timezone
 
 from .models import Post
 
 
 class BlogHappyPathTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123',
+        )
+
     def test_get_posts_shows_created_post(self):
         post = Post.objects.create(title='Primer post', content='Contenido de prueba')
 
@@ -16,6 +23,7 @@ class BlogHappyPathTests(TestCase):
         self.assertContains(response, post.content)
 
     def test_create_post_saves_post_and_redirects(self):
+        self.client.login(username='testuser', password='testpass123')
         response = self.client.post(
             reverse('createPost'),
             {'title': 'Nuevo post', 'content': 'Texto del nuevo post'},
@@ -31,6 +39,7 @@ class BlogHappyPathTests(TestCase):
         )
 
     def test_delete_post_soft_deletes_and_hides_from_list(self):
+        self.client.login(username='testuser', password='testpass123')
         post = Post.objects.create(title='Post a eliminar', content='Contenido eliminado')
 
         response = self.client.post(reverse('deletePost', args=[post.id]))
@@ -54,6 +63,7 @@ class BlogHappyPathTests(TestCase):
         self.assertContains(response, post.content)
 
     def test_restore_post_clears_deleted_at(self):
+        self.client.login(username='testuser', password='testpass123')
         post = Post.objects.create(title='Post restaurable', content='Contenido restaurable')
         post.deleted_at = timezone.now()
         post.save()
