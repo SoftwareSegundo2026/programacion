@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="tareas-form">
+    <div class="section-header">
+        <h1 class="tareas-form__title">{{ titulo }}</h1>
+        <p class="tareas-form__subtitle">Completá los datos para crear o editar una tarea.</p>
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="form-error-banner">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <form method="post" class="tareas-form__form">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}" class="form-label {% if field.field.required %}form-label--required{% endif %}">
+                {{ field.label }}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+            <p class="form-error">{{ field.errors.0 }}</p>
+            {% endif %}
+            {% if field.help_text %}
+            <p class="form-help">{{ field.help_text }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        {% if error_message %}
+        <div class="form-error-banner">
+            {{ error_message }}
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a href="{% url 'lista_tareas' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

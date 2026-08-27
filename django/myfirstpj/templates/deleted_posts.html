@@ -7,10 +7,10 @@
     <div class="section-header">
         <div class="section-header__eyebrow">Recuperable</div>
         <h1 class="section-title">Posts eliminados</h1>
-        <p class="section-subtitle">Recuperá posts eliminados mediante soft delete.</p>
+        <p class="section-subtitle">Recupera posts eliminados mediante soft delete.</p>
     </div>
 
-    <div class="deleted-post-list__actions">
+    <div class="section-actions">
         <a href="{% url 'getPosts' %}" class="btn btn-ghost">Volver al listado</a>
     </div>
 
@@ -26,17 +26,15 @@
             </div>
         </div>
         <div class="deleted-post-card__footer">
-            <div class="deleted-post-card__actions">
-                <form action="{% url 'restorePost' post.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-ghost">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M3 8l3.5 3.5L13 5M6 5l-3 3M8 11l3-3M5 11h6" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        Recuperar
-                    </button>
-                </form>
-            </div>
+            <form action="{% url 'restorePost' post.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline btn--sm">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 8l3.5 3.5L13 5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Recuperar
+                </button>
+            </form>
         </div>
     </article>
     {% empty %}
@@ -48,7 +46,7 @@
             </svg>
         </div>
         <h2 class="empty-state__title">No hay posts eliminados</h2>
-        <p class="empty-state__subtitle">Eliminando es temporal — podés recuperar cualquier post en cualquier momento.</p>
+        <p class="empty-state__subtitle">Eliminando es temporal — podes recuperar cualquier post en cualquier momento.</p>
         <a href="{% url 'getPosts' %}" class="btn btn-ghost">Volver al listado</a>
     </div>
     {% endfor %}

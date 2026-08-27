@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis tareas{% endblock %}
+
+{% block content %}
+<div class="tarea-list">
+    <div class="section-header">
+        <div class="section-header__eyebrow">Tareas</div>
+        <h1 class="section-title">Mis tareas</h1>
+        <p class="section-subtitle">Gestiona tus tareas pendientes.</p>
+    </div>
+
+    <div class="tarea-list__actions">
+        <a href="{% url 'crear_tarea' %}" class="btn btn-primary">Crear tarea</a>
+    </div>
+
+    {% for tarea in tareas %}
+    <article class="tarea-card">
+        <div class="tarea-card__header">
+            <form action="{% url 'toggle_tarea' tarea.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="tarea-card__checkbox {% if tarea.completada %}tarea-card__checkbox--checked{% endif %}" title="{{ tarea.completada|yesno:'Marcar como pendiente,Marcar como completada' }}">
+                    {% if tarea.completada %}&#10003;{% endif %}
+                </button>
+            </form>
+            <div class="tarea-card__content">
+                <h2 class="tarea-card__title {% if tarea.completada %}tarea-card__title--completed{% endif %}">{{ tarea.nombre }}</h2>
+                {% if tarea.descripcion %}
+                <p class="tarea-card__description">{{ tarea.descripcion }}</p>
+                {% endif %}
+                <div class="tarea-card__meta">
+                    <span class="tarea-card__date">{{ tarea.fecha|date:"d/m/Y" }}</span>
+                    <span class="tarea-card__priority-badge tarea-card__priority--{{ tarea.prioridad }}">{{ tarea.get_prioridad_display }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="tarea-card__footer">
+            <div class="tarea-card__actions">
+                <a href="{% url 'editar_tarea' tarea.id %}" class="tarea-card__action-btn">Editar</a>
+                <form action="{% url 'eliminar_tarea' tarea.id %}" method="post" onsubmit="return confirm('Eliminar esta tarea?')" style="display:inline">
+                    {% csrf_token %}
+                    <button type="submit" class="tarea-card__delete-btn">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </article>
+    {% empty %}
+    <div class="tarea-list--empty">
+        <h2 class="empty-state__title">No hay tareas creadas</h2>
+        <p class="empty-state__subtitle">Crea una para comenzar.</p>
+        <a href="{% url 'crear_tarea' %}" class="btn btn-primary">Crear tarea</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

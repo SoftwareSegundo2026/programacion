@@ -7,31 +7,30 @@
     <title>{% block title %}Mi Blog{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;450;500;600&family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
-<body class="site-body">
+<body class="site-body" style="display:flex;flex-direction:column;min-height:100vh;">
     {% block nav %}
     <header class="site-header">
         <div class="site-header__inner">
             <a href="{% url 'getPosts' %}" class="site-header__brand">Mi Blog</a>
             <nav class="site-header__nav" aria-label="Navegación principal">
-                <ul class="site-header__nav-list">
-                    <li><a href="{% url 'getPosts' %}" class="site-header__nav-link {% if request.resolver_match.url_name == 'getPosts' %}active{% endif %}">Inicio</a></li>
-                    <li><a href="{% url 'lista_tareas' %}" class="site-header__nav-link {% if request.resolver_match.url_name == 'lista_tareas' %}active{% endif %}">Tareas</a></li>
-                    <li><a href="{% url 'deletedPosts' %}" class="site-header__nav-link {% if request.resolver_match.url_name == 'deletedPosts' %}active{% endif %}">Eliminados</a></li>
-                </ul>
+                <a href="{% url 'getPosts' %}" class="site-header__nav-link {% if request.resolver_match.url_name == 'getPosts' %}active{% endif %}">Blog</a>
+                <a href="{% url 'lista_tareas' %}" class="site-header__nav-link {% if request.resolver_match.url_name == 'lista_tareas' %}active{% endif %}">Tareas</a>
+                <a href="{% url 'deletedPosts' %}" class="site-header__nav-link {% if request.resolver_match.url_name == 'deletedPosts' %}active{% endif %}">Eliminados</a>
             </nav>
             <div class="site-header__actions">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'createPost' %}" class="btn btn-primary">Crear post</a>
-                    <span class="site-header__divider"></span>
                     <a href="{% url 'ver_perfil' %}" class="btn btn-ghost">{{ user.username }}</a>
-                    <a href="{% url 'logout' %}" class="btn btn-ghost">Salir</a>
+                    <form action="{% url 'logout' %}" method="post" style="display:inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline">Salir</button>
+                    </form>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-ghost">Iniciar sesion</a>
-                    <a href="{% url 'register' %}" class="btn btn-primary">Registrarse</a>
+                    <a href="{% url 'register' %}" class="btn btn-dark">Registrarse</a>
                 {% endif %}
             </div>
         </div>
@@ -48,20 +47,19 @@
     </div>
     {% endif %}
 
-    <main class="container">
+    {% block main_open %}<main class="page-container" style="flex:1;">{% endblock %}
         {% block content %}{% endblock %}
-    </main>
+    {% block main_close %}</main>{% endblock %}
 
     {% block footer %}
     <footer class="site-footer">
         <div class="site-footer__inner">
-            <a href="{% url 'getPosts' %}" class="site-footer__brand">Mi Blog</a>
-            <ul class="site-footer__links">
-                <li><a href="{% url 'getPosts' %}">Inicio</a></li>
-                <li><a href="{% url 'lista_tareas' %}">Tareas</a></li>
-                <li><a href="{% url 'deletedPosts' %}">Eliminados</a></li>
-            </ul>
-            <p class="site-footer__copy">Un producto de QS Software</p>
+            <p class="site-footer__copy">&copy; 2024 Mi Blog. Todos los derechos reservados.</p>
+            <nav class="site-footer__links">
+                <a href="{% url 'getPosts' %}">Blog</a>
+                <a href="{% url 'lista_tareas' %}">Tareas</a>
+                <a href="{% url 'deletedPosts' %}">Eliminados</a>
+            </nav>
         </div>
     </footer>
     {% endblock %}
