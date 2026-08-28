@@ -1,3 +1,14 @@
+// =============================================================================
+// app/productos/nuevo/page.tsx — Alta de producto
+// -----------------------------------------------------------------------------
+// Muestra el formulario compartido (ProductoForm) y, al enviarlo, ejecuta la
+// mutación useCrearProducto. Si la API responde OK, invalida la caché de la
+// lista y redirige a /productos (donde el nuevo producto ya aparece).
+//
+// POR QUÉ: el formulario valida con Zod antes de salir (los errores se ven por
+// campo), y el envío queda tipado. La navegación post-éxito usa onSuccess de
+// la mutation: la UI solo reacciona cuando el servidor confirmó.
+// =============================================================================
 "use client";
 
 import { useRouter } from "next/navigation";

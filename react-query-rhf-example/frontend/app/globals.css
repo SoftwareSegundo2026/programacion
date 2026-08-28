@@ -1,3 +1,12 @@
+/* =============================================================================
+   app/globals.css — Estilos globales
+   -----------------------------------------------------------------------------
+   Punto de entrada de Tailwind v4 (se importa desde app/layout.tsx). Define
+   también los colores de fondo y texto base de toda la aplicación.
+
+   POR QUÉ: el sistema de diseño vive acá: cambiar el fondo o el color del
+   texto afecta a todas las páginas sin tocar componente por componente.
+   ============================================================================= */
 @import "tailwindcss";
 
 :root {

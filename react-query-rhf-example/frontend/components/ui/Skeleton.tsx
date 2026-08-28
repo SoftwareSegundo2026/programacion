@@ -1,3 +1,14 @@
+// =============================================================================
+// components/ui/Skeleton.tsx — Estado de carga (loading)
+// -----------------------------------------------------------------------------
+// Placeholder animado que se muestra MIENTRAS una query no resolvió aún.
+// LoadingSkeleton arma una grilla de tarjetas grises para que la pantalla no
+// "salte" cuando llegan los datos.
+//
+// POR QUÉ: junto con ErrorState y EmptyState conforma los tres estados de UI
+// que pide design.md (carga, error, vacío). Con TanStack Query basta mirar
+// isLoading / isError / data.length para decidir cuál mostrar.
+// =============================================================================
 import { cn } from "@/lib/cn";
 
 export function Skeleton({ className }: { className?: string }) {

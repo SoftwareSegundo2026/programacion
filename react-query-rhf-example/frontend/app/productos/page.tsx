@@ -1,3 +1,18 @@
+// =============================================================================
+// app/productos/page.tsx — Listado de productos
+// -----------------------------------------------------------------------------
+// Pantalla principal del ejemplo. Llama a useProductos (TanStack Query) y,
+// según el estado de la consulta, muestra:
+//   isLoading  -> skeleton de carga
+//   isError    -> mensaje de error con botón "Reintentar" (refetch)
+//   sin datos  -> empty state
+//   con datos  -> grilla de ProductoCard
+// También maneja la eliminación con confirmación vía useEliminarProducto
+// (mutation con actualización optimista).
+//
+// POR QUÉ: demuestra que los estados de UI (loading/error/empty) se resuelven
+// declarando, no programando a mano cada caso con useEffect + useState.
+// =============================================================================
 "use client";
 
 import Link from "next/link";

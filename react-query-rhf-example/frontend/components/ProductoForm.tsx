@@ -1,3 +1,19 @@
+// =============================================================================
+// components/ProductoForm.tsx — Formulario compartido (alta y edición)
+// -----------------------------------------------------------------------------
+// Único formulario de producto, usado tanto por /productos/nuevo como por
+// /productos/[id]/editar. Combina React Hook Form (gestión de valores y
+// errores sin estado manual) con Zod (validación tipada) a través del
+// zodResolver.
+//
+// POR QUÉ:
+//   - Un solo form para crear y editar evita duplicar HTML y lógica.
+//   - El esquema Zod define las reglas UNA vez; el resolver las conecta y los
+//     errores se muestran por campo (no en un bloque genérico).
+//   - En edición, defaultValues precarga los valores actuales del registro.
+//   - El botón se deshabilita mientras se envía (isSubmitting) para no
+//     duplicar pedidos al servidor.
+// =============================================================================
 "use client";
 
 import { useForm } from "react-hook-form";

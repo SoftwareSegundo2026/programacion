@@ -1,3 +1,17 @@
+// =============================================================================
+// app/layout.tsx — Layout raíz de la aplicación
+// -----------------------------------------------------------------------------
+// Este archivo envuelve TODAS las páginas: monta el proveedor de TanStack
+// Query (Providers) y el Header, y define el contenido principal. Es la única
+// pieza que necesita saber que existe una caché de datos global.
+//
+// POR QUÉ: si cada página montara su propio QueryClient, la caché se perdería
+// al navegar. Al ponerlo acá arriba, cualquier página puede usar useQuery /
+// useMutation y los datos quedan compartidos entre rutas.
+//
+// Nota: el layout puede ser un server component; Providers (que usa hooks) es
+// quien marca el límite "use client".
+// =============================================================================
 import type { Metadata } from "next";
 import { Providers } from "@/lib/providers";
 import { Header } from "@/components/Header";

@@ -1,0 +1,9 @@
+# =============================================================================
+# pnpm-workspace.yaml — Configuración de pnpm
+# -----------------------------------------------------------------------------
+# En pnpm 11, los ajustes viven acá (no en package.json). Con allowBuilds se
+# aprueba que @nestjs/core ejecute su script postinstall; sin esto, pnpm
+# ignora el build y falla al correr "pnpm run" (ERR_PNPM_IGNORED_BUILDS).
+# =============================================================================
+allowBuilds:
+  '@nestjs/core': true

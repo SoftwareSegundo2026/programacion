@@ -1,3 +1,15 @@
+// =============================================================================
+// app/productos/[id]/editar/page.tsx — Edición de producto
+// -----------------------------------------------------------------------------
+// Combina lectura y escritura: useProducto(id) carga el registro desde la API
+// (con sus estados de carga/error) y, cuando llega, precarga el formulario con
+// defaultValues. Al enviar, useActualizarProducto(id) hace PUT y redirige a la
+// lista tras invalidar la caché.
+//
+// POR QUÉ: muestra el ciclo completo de un registro en edición: el esquema Zod
+// es el MISMO que en alta (reglas compartidas), la validación del detalle no
+// depende de la pantalla y los datos editados quedan consistentes con la API.
+// =============================================================================
 "use client";
 
 import { useParams, useRouter } from "next/navigation";

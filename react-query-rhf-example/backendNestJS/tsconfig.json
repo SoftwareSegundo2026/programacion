@@ -1,0 +1,28 @@
+// =============================================================================
+// tsconfig.json — Configuración de TypeScript para NestJS
+// -----------------------------------------------------------------------------
+// Habilita los decoradores (experimentalDecorators + emitDecoratorMetadata)
+// que NestJS usa para declarar módulos, controladores e inyección de
+// dependencias, y define dónde se emite el build (dist).
+// =============================================================================
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}

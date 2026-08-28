@@ -1,3 +1,15 @@
+// =============================================================================
+// components/ProductoCard.tsx — Tarjeta de producto
+// -----------------------------------------------------------------------------
+// Muestra un producto de la lista con sus datos, el estado de disponibilidad
+// y las acciones: sumar/quitar unidades al carrito (Zustand, con control +/−
+// que permite comprar más de una unidad), Editar (link a la pantalla de
+// edición) y Eliminar con confirmación en dos pasos.
+//
+// POR QUÉ: separa la presentación del listado. La página /productos decide
+// QUÉ datos pedir (useQuery) y este componente decide CÓMO se ven y actúan.
+// La confirmación antes de eliminar evita acciones destructivas accidentales.
+// =============================================================================
 "use client";
 
 import Link from "next/link";
@@ -17,7 +29,8 @@ interface Props {
 export function ProductoCard({ producto, onEliminar, eliminando }: Props) {
   const [confirmando, setConfirmando] = useState(false);
   const agregar = useCarrito((s) => s.agregar);
-  const enCarrito = useCarrito((s) => s.items.includes(producto.id));
+  const restar = useCarrito((s) => s.restar);
+  const cantidad = useCarrito((s) => s.items[producto.id] ?? 0);
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl bg-white p-5 shadow-sm">
@@ -39,9 +52,31 @@ export function ProductoCard({ producto, onEliminar, eliminando }: Props) {
       </div>
 
       <div className="mt-auto flex items-center gap-2">
-        <Button variant="secondary" className="flex-1" onClick={() => agregar(producto.id)}>
-          {enCarrito ? "Agregado ✓" : "Agregar"}
-        </Button>
+        {cantidad === 0 ? (
+          <Button variant="secondary" className="flex-1" onClick={() => agregar(producto.id)}>
+            Agregar
+          </Button>
+        ) : (
+          <div className="flex flex-1 items-center justify-between rounded-full border border-slate-300 bg-white px-2 py-1">
+            <button
+              type="button"
+              onClick={() => restar(producto.id)}
+              aria-label="Quitar una unidad"
+              className="px-2 text-lg font-bold text-slate-600 hover:text-slate-900"
+            >
+              −
+            </button>
+            <span className="text-sm font-semibold text-slate-900">{cantidad}</span>
+            <button
+              type="button"
+              onClick={() => agregar(producto.id)}
+              aria-label="Agregar una unidad"
+              className="px-2 text-lg font-bold text-slate-600 hover:text-slate-900"
+            >
+              +
+            </button>
+          </div>
+        )}
         <Link href={`/productos/${producto.id}/editar`}>
           <Button variant="secondary">Editar</Button>
         </Link>

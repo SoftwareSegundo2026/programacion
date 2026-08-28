@@ -1,3 +1,13 @@
+// =============================================================================
+// app/page.tsx — Portada (landing del taller)
+// -----------------------------------------------------------------------------
+// Página de inicio que presenta los tres conceptos del taller (TanStack Query,
+// React Hook Form + Zod, Zustand) y da acceso al módulo de productos.
+//
+// POR QUÉ: funciona como "guía de lectura" para el alumno: en una pantalla se
+// explica QUÉ resuelve cada librería antes de entrar a ver el código aplicado
+// en /productos. Es una página estática: no consume la API, solo navega.
+// =============================================================================
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
@@ -37,9 +47,7 @@ export default function Home() {
             <Button variant="secondary">Ver productos</Button>
           </Link>
           <Link href="/productos/nuevo">
-            <Button className="bg-white text-slate-900 hover:bg-slate-200">
-              Crear producto
-            </Button>
+            <Button variant="light">Crear producto</Button>
           </Link>
         </div>
       </section>

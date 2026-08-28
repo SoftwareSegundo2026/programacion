@@ -1,3 +1,16 @@
+// =============================================================================
+// schemas/producto.ts — Contrato tipado con Zod
+// -----------------------------------------------------------------------------
+// Define, en UN solo lugar, dos cosas sobre un producto:
+//   1) las reglas de validación (longitudes, rangos, mensajes en español) y
+//   2) los tipos de TypeScript inferidos automáticamente (z.infer).
+//
+// POR QUÉ: es la "fuente única de verdad" del formulario. React Hook Form usa
+// este esquema para validar (vía zodResolver) y el tipo ProductoFormValues
+// tipa el submit; así el formulario y la llamada a la API nunca pueden
+// desincronizarse. Sin esto, la validación estaría duplicada (HTML + JS +
+// backend) y cada copia se termina desactualizando.
+// =============================================================================
 import { z } from "zod";
 
 // Esquema del formulario (validación tipada, compartida entre crear y editar).

@@ -1,3 +1,13 @@
+// =============================================================================
+// components/ui/Badge.tsx — Etiquetas de estado (chips)
+// -----------------------------------------------------------------------------
+// Componente pequeño para mostrar estados o etiquetas de contexto, como la
+// disponibilidad de un producto (Disponible / Agotado).
+//
+// POR QUÉ: los "badges" permiten escanear rápido una lista sin leer todo el
+// texto; tenerlos como componente reutilizable mantiene el mismo lenguaje
+// visual en todas las entidades del sistema (ver design.md).
+// =============================================================================
 import { cn } from "@/lib/cn";
 
 export function Badge({ children, className }: { children: React.ReactNode; className?: string }) {

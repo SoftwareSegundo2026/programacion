@@ -1,3 +1,18 @@
+// =============================================================================
+// queries/productos.ts — Hooks de datos (TanStack Query)
+// -----------------------------------------------------------------------------
+// Capa que conecta el frontend con la API usando TanStack Query. Define:
+//   - useProductos / useProducto  -> lecturas con caché (useQuery)
+//   - useCrearProducto / useActualizarProducto / useEliminarProducto
+//                                  -> escrituras (useMutation)
+//
+// POR QUÉ: es el corazón del taller. Los componentes NO llaman a la API
+// directamente: llaman a estos hooks y reciben { data, isLoading, isError }.
+// La caché hace que navegar entre pantallas no repita peticiones, y la
+// invalidación (invalidateQueries) mantiene la lista sincronizada después de
+// cada alta/edición/baja. useEliminarProducto muestra además actualización
+// optimista (onMutate) con rollback (onError).
+// =============================================================================
 import {
   useMutation,
   useQuery,

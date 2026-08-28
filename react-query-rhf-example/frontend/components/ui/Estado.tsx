@@ -1,3 +1,14 @@
+// =============================================================================
+// components/ui/Estado.tsx — Estados de error y vacío
+// -----------------------------------------------------------------------------
+// ErrorState: qué ver cuando la query falla (red, 404, 500) con un botón para
+// reintentar. EmptyState: qué ver cuando la API responde con cero resultados.
+//
+// POR QUÉ: son los otros dos estados de UI del patrón (junto a Skeleton).
+// Centralizarlos hace que el feedback al usuario sea claro y consistente en
+// toda la app: nadie se olvida de manejar el error ni muestra una pantalla en
+// blanco cuando no hay datos.
+// =============================================================================
 import { Button } from "@/components/ui/Button";
 
 // Estado de ERROR: feedback claro cuando la query falla (red, 404, 500, etc.).
