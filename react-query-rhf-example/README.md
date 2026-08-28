@@ -1,6 +1,11 @@
 # Taller: Consumo de APIs en Next.js — TanStack Query · React Hook Form · Zod
 
-Ejemplo didáctico para aplicar los conceptos de **datos (server state)**, **formularios con validación tipada** y **estado del cliente** en un frontend Next.js conectado a un backend FastAPI.
+Ejemplo didáctico para aplicar los conceptos de **datos (server state)**, **formularios con validación tipada** y **estado del cliente** en un frontend Next.js conectado a un backend. El proyecto incluye **dos backends equivalentes** (mismas rutas y datos) para que se elija el que prefiera cada alumno:
+
+- **FastAPI** → `backend/` (Python)
+- **NestJS** → `backendNestJS/` (TypeScript)
+
+> ⚠️ **Ambos backends usan el puerto 8000 y no deben estar corriendo al mismo tiempo.** Elegí uno y levantá solo ese.
 
 Este material acompaña la presentación `presentacion/tanstack-query-rhf.pptx` (y `.pdf`).
 
@@ -25,11 +30,14 @@ Este material acompaña la presentación `presentacion/tanstack-query-rhf.pptx` 
 
 ```
 react-query-rhf-example/
-├── backend/                    # API mínima de productos (FastAPI + SQLite en memoria)
+├── backend/                    # API de productos en FastAPI (Python, datos en memoria)
 │   └── main.py
+├── backendNestJS/              # Misma API de productos en NestJS (TypeScript, datos en memoria)
+│   └── src/                    # main.ts, app.module.ts, productos/{controller,service,dto,entities}
 ├── frontend/                   # App Next.js 16 + TS + Tailwind v4
 │   ├── app/
 │   │   ├── page.tsx            # Portada explicativa
+│   │   ├── carrito/            # Vista del carrito (Zustand + TanStack Query)
 │   │   ├── productos/          # Listado (useQuery + delete optimista)
 │   │   ├── productos/nuevo/    # Alta (RHF + Zod + useMutation)
 │   │   └── productos/[id]/editar/  # Edición (detalle + actualización)
@@ -47,7 +55,13 @@ react-query-rhf-example/
 
 ## Puesta en marcha
 
-### 1. Backend (puerto 8000)
+### 1. Backend (puerto 8000) — elegí UNO solo
+
+El proyecto trae **dos backends equivalentes** (mismas rutas `/api/productos` y `/api/salud`, mismos datos iniciales). **Elegí uno** y levantá solo ese:
+
+> ⚠️ Ambos usan el puerto 8000. **No pueden estar corriendo al mismo tiempo**; si el otro quedó levantado, detenelo antes de arrancar el elegido.
+
+**Opción A — FastAPI (Python):**
 
 ```bash
 cd backend
@@ -56,6 +70,16 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 # Docs: http://localhost:8000/docs
 ```
+
+**Opción B — NestJS (TypeScript):**
+
+```bash
+cd backendNestJS
+pnpm install        # o npm install
+pnpm run start:dev  # o npm run start:dev
+```
+
+Como ambos exponen la misma API, **el frontend funciona sin cambios** con cualquiera de los dos.
 
 ### 2. Frontend (puerto 3000)
 
@@ -96,7 +120,7 @@ navegador y no hay problemas de CORS en desarrollo.
 
 ### Nota sobre la API
 
-El backend guarda los datos **en memoria**: al reiniciar `uvicorn` los cambios se pierden. Es intencional, para mantener el ejemplo enfocado en el frontend.
+El backend elegido (FastAPI o NestJS) guarda los datos **en memoria**: al reiniciar el servidor los cambios se pierden. Es intencional, para mantener el ejemplo enfocado en el frontend.
 
 ---
 
@@ -120,8 +144,8 @@ El backend guarda los datos **en memoria**: al reiniciar `uvicorn` los cambios s
    - si está fresca (`staleTime`), **no** vuelve a pedir nada a la red;
    - si no, ejecuta el `queryFn`.
 4. El `queryFn` invoca a `lib/api.ts` → `apiRequest('/productos')`, que hace `fetch('/api/productos')`.
-5. El rewrite de `next.config.ts` reenvía la petición a `API_BASE_URL/api/productos` (el backend FastAPI, `backend/main.py`).
-6. `backend/main.py` responde con el JSON de los productos.
+5. El rewrite de `next.config.ts` reenvía la petición a `API_BASE_URL/api/productos` — el backend elegido (`backend/main.py` en FastAPI o `backendNestJS/src` en NestJS).
+6. El backend responde con el JSON de los productos.
 7. La respuesta se guarda en la caché y la página muestra el estado que corresponda:
    - `isLoading` → `components/ui/Skeleton.tsx`;
    - `isError` → `components/ui/Estado.tsx` (mensaje + botón "Reintentar");
@@ -138,11 +162,11 @@ El backend guarda los datos **en memoria**: al reiniciar `uvicorn` los cambios s
    - si hay errores, se muestran **por campo** y **no** sale ninguna petición a la red;
    - si pasa, el `onSubmit` dispara la mutación (`useCrearProducto()` o `useActualizarProducto(id)` en `queries/productos.ts`).
 5. La mutación usa `lib/api.ts` → `apiRequest('/productos', { method: 'POST', body })` o `PUT /productos/{id}`.
-6. El rewrite reenvía al backend; `backend/main.py` valida el payload (Pydantic) y responde.
+6. El rewrite reenvía al backend; el payload se valida antes de responder (Pydantic en FastAPI, DTOs con `class-validator` en NestJS).
 7. `onSuccess` → `invalidateQueries(['productos'])`: la lista queda marcada como vieja y se vuelve a pedir (estadio 2), ahora con el dato nuevo.
 8. `router.push('/productos')` redirige al listado, que ya muestra el cambio.
 
-> Resumen del patrón: **página → hook de query/mutation (`queries/`) → cliente HTTP (`lib/api.ts`) → rewrite (`next.config.ts`) → backend (`backend/main.py`) → caché actualizada → UI con estados (`components/ui/`).**
+> Resumen del patrón: **página → hook de query/mutation (`queries/`) → cliente HTTP (`lib/api.ts`) → rewrite (`next.config.ts`) → backend (`backend/` o `backendNestJS/`) → caché actualizada → UI con estados (`components/ui/`).**
 
 ---
 
