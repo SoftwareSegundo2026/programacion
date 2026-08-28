@@ -23,20 +23,20 @@ export class CreateProductoDto {
   @IsString()
   @MinLength(3, { message: 'El nombre debe tener al menos 3 caracteres' })
   @MaxLength(100, { message: 'El nombre no puede superar los 100 caracteres' })
-  nombre: string;
+  nombre!: string;
 
   @IsString()
   @MaxLength(60, { message: 'La categoría no puede superar los 60 caracteres' })
-  categoria: string;
+  categoria!: string;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0.01, { message: 'El precio debe ser mayor a 0' })
-  precio: number;
+  precio!: number;
 
   @IsNumber({ maxDecimalPlaces: 0 })
   @Min(0, { message: 'El stock no puede ser negativo' })
-  stock: number;
+  stock!: number;
 
   @IsBoolean()
-  disponible: boolean;
+  disponible!: boolean;
 }

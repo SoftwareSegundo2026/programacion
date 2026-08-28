@@ -9,11 +9,11 @@
 // al crear/editar) evita que la validación de entrada contamine la salida.
 // =============================================================================
 export class Producto {
-  id: number;
-  nombre: string;
-  categoria: string;
-  precio: number;
-  stock: number;
-  disponible: boolean;
-  creado_en: string;
+  id!: number;
+  nombre!: string;
+  categoria!: string;
+  precio!: number;
+  stock!: number;
+  disponible!: boolean;
+  creado_en!: string;
 }
